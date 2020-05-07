@@ -1,8 +1,8 @@
 <?php
 require_once "../config.php";
 
+use Tsugi\Blob\BlobUtil;
 use Tsugi\Core\LTIX;
-use \Tsugi\Blob\BlobUtil;
 use Tsugi\UI\Output;
 
 $p = $CFG->dbprefix;

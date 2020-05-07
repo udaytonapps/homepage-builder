@@ -253,7 +253,7 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
                                         email = :email,
                                         preferred_contact = :preferred_contact,
                                         office_hours = :office_hours,
-                                        getting_started = :gettings_started,
+                                        getting_started = :getting_started,
                                         about_me = :about_me
                                         WHERE link_id = :link_id");
         $updateStmt->execute(array(
@@ -481,7 +481,7 @@ $OUTPUT->footerStart();
             labelIdle: '<span class="filepond-main-label">Drag & Drop Your Photo or Click to Browse</span>',
             imageResizeTargetHeight: 400,
             imageEditEditor: doka,
-            imageEditInstantEdit: true,
+            imageEditInstantEdit: false,
             server: {
                 url: 'edit.php?PHPSESSID=<?php echo session_id() ?>'
             },
