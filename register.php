@@ -16,6 +16,6 @@ $REGISTER_LTI2 = array(
     "source_url" => "https://bitbucket.udayton.edu/projects/UELA/repos/tool-course-home/browse",
     "screen_shots" => array(
     ),
-    "hide_from_store" => false
+    "hide_from_store" => true
 );
 
