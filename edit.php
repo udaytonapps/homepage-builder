@@ -238,6 +238,16 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
             ":about_me" => $aboutMe
         ));
     } else {
+        // First delete old blobs before adding new ones
+        $delSyllabus = $PDOX->prepare("DELETE FROM {$p}blob_file WHERE file_id = :syllabusId");
+        $delSyllabus->execute(array(":syllabusId" => $home["syllabus_blob_id"]));
+
+        $delSchedule = $PDOX->prepare("DELETE FROM {$p}blob_file WHERE file_id = :scheduleId");
+        $delSchedule->execute(array(":scheduleId" => $home["schedule_blob_id"]));
+
+        $delPicture = $PDOX->prepare("DELETE FROM {$p}blob_file WHERE file_id = :pictureId");
+        $delPicture->execute(array(":pictureId" => $home["picture_blob_id"]));
+
         // Homepage previously existed so update
         $updateStmt = $PDOX->prepare("UPDATE {$p}course_home SET 
                                         sections = :sections,
@@ -485,7 +495,8 @@ $OUTPUT->footerStart();
             imageEditEditor: doka,
             imageEditInstantEdit: false,
             server: {
-                url: 'edit.php?PHPSESSID=<?php echo session_id() ?>'
+                process: 'edit.php?PHPSESSID=<?php echo session_id() ?>',
+                revert: 'delete-picture.php?PHPSESSID=<?php echo session_id() ?>'
             },
             files: [
                 <?php
@@ -498,7 +509,8 @@ $OUTPUT->footerStart();
 
         const pond_syllabus = FilePond.create( document.querySelector('#syllabus'), {
             server: {
-                url: 'edit.php?PHPSESSID=<?php echo session_id() ?>'
+                process: 'edit.php?PHPSESSID=<?php echo session_id() ?>',
+                revert: 'delete-syllabus.php?PHPSESSID=<?php echo session_id() ?>'
             },
             files: [
                 <?php
@@ -511,7 +523,8 @@ $OUTPUT->footerStart();
 
         const pond_schedule = FilePond.create( document.querySelector('#schedule'), {
             server: {
-                url: 'edit.php?PHPSESSID=<?php echo session_id() ?>'
+                process: 'edit.php?PHPSESSID=<?php echo session_id() ?>',
+                revert: 'delete-schedule.php?PHPSESSID=<?php echo session_id() ?>'
             },
             files: [
                 <?php
