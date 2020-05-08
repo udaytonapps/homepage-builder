@@ -15,6 +15,7 @@ $DATABASE_INSTALL = array(
     user_id             INTEGER NOT NULL,
     sections            VARCHAR(255) NULL,
     meetings            varchar(255) NULL,
+    class_location      VARCHAR(255) NULL,
     start_date          DATE NULL,
     end_date            DATE NULL,
     course_title        VARCHAR(255) NULL,

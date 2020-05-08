@@ -13,11 +13,9 @@ $homeStmt = $PDOX->prepare("SELECT * FROM {$p}course_home WHERE link_id = :linkI
 $homeStmt->execute(array(":linkId" => $LINK->id));
 $home = $homeStmt->fetch(PDO::FETCH_ASSOC);
 
-if (!$home && $USER->instructor) {
-    // If no home set up then go straight to edit
-    header( 'Location: '.addSession('edit.php') ) ;
-} else if (!$home) {
-    echo '<h3>Instructor has not yet added course details.</h3>';
+if (!$home) {
+    // If no home set up then go straight to splash
+    header( 'Location: '.addSession('splash.php') ) ;
     return;
 }
 
@@ -102,7 +100,7 @@ if ($USER->instructor) {
             <div class="col-md-3 col-sm-4 col-5">
                 <?php
                 $sections = explode(',', $home["sections"]);
-                if ($sections) {
+                if (count($sections) > 0) {
                     ?>
                     <p class="profile-rating" style="margin-top:0;">
                         SECTIONS<br/>
@@ -115,10 +113,10 @@ if ($USER->instructor) {
                     <?php
                 }
                 $meetings = explode(',', $home["meetings"]);
-                if ($meetings) {
+                if (count($meetings) > 0) {
                     ?>
                     <p class="profile-rating" style="margin-top:0;">
-                        CLASS MEETINGS<br/>
+                        CLASS MEETING TIMES<br/>
                         <?php
                         foreach ($meetings as $meeting) {
                             echo '<span>' . $meeting . '</span><br />';
@@ -127,7 +125,15 @@ if ($USER->instructor) {
                     </p>
                     <?php
                 }
-                if ($home['start_date'] || $home['end_date']) {
+                if (isset($home["class_location"]) && $home["class_location"] != '') {
+                    ?>
+                    <p class="profile-rating" style="margin-top:0;">
+                        CLASS LOCATION<br/>
+                        <span><?=$home["class_location"]?></span>
+                    </p>
+                    <?php
+                }
+                if ((isset($home['start_date']) && $home["start_date"] != '') || (isset($home['end_date']) && $home["end_date"] != '')) {
                     $formattedStartDate = '';
                     if ($home['start_date'] && $home['start_date'] != '') {
                         $startdate = new DateTime($home['start_date']);
@@ -149,8 +155,12 @@ if ($USER->instructor) {
                     </p>
                     <?php
                 }
+                if (($home["syllabus_blob_id"] && $home["syllabus_blob_id"] != "") || ($home["schedule_blob_id"] && $home["schedule_blob_id"] != "")){
+                    ?>
+                    <hr />
+                    <?php
+                }
                 ?>
-                <hr />
                 <div class="profile-work pb-4">
                     <?php
                     $syllabus_url = BlobUtil::getAccessUrlForBlob($home["syllabus_blob_id"], Output::getUtilUrl('/public_blob_serve.php'));
@@ -171,11 +181,15 @@ if ($USER->instructor) {
                 </div>
             </div>
             <div class="col-md-9 col-sm-8 col-7">
-                <h6>Course Description</h6>
-                <p>
-                    <?= $home['course_desc'] ?>
-                </p>
                 <?php
+                if (isset($home["course_desc"]) && $home["course_desc"] != '') {
+                    ?>
+                    <h6>Course Description</h6>
+                    <p>
+                        <?= $home['course_desc'] ?>
+                    </p>
+                    <?php
+                }
                 if (isset($home['course_video']) && $home['course_video'] !== '') {
                     ?>
                     <div class="videoWrapper">
@@ -230,7 +244,7 @@ if ($USER->instructor) {
                         echo '</p>';
                     }
                     $office_hours = explode(',', $home["office_hours"]);
-                    if ($office_hours) {
+                    if (count($office_hours) > 0) {
                         ?>
                         <p class="profile-rating">
                             OFFICE HOURS<br/>

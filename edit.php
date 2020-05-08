@@ -21,6 +21,7 @@ $home = $homeStmt->fetch(PDO::FETCH_ASSOC);
 if($home) {
     $sections = $home["sections"];
     $meetings = $home["meetings"];
+    $class_location = $home["class_location"];
     $start_date = $home["start_date"];
     $end_date = $home["end_date"];
     $course_title = $home["course_title"];
@@ -41,16 +42,17 @@ if($home) {
 } else {
     $sections = '';
     $meetings = '';
+    $class_location = '';
     $start_date = '';
     $end_date = '';
     $course_title = '';
     $course_desc = '';
     $course_video = '';
     $prefix = '';
-    $instructor_name = '';
+    $instructor_name = $USER->displayname;
     $office_location = '';
     $phone = '';
-    $email = '';
+    $email = $USER->email;
     $preferred_contact = '';
     $office_hours = '';
     $getting_started = '';
@@ -177,13 +179,14 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
 
     $sections = isset($_POST["sections"]) ? $_POST["sections"] : "";
     $meetings = isset($_POST["meetings"]) ? $_POST["meetings"] : "";
-    $startDate = "";
-    if (isset($_POST["start_date"])) {
+    $classLocation = isset($_POST["class_location"]) ? $_POST["class_location"] : "";
+    $startDate = null;
+    if (isset($_POST["start_date"]) && $_POST["start_date"] != "") {
         $timestamp = strtotime($_POST["start_date"]);
         $startDate = date("Y-m-d H:i:s", $timestamp);
     }
-    $endDate = "";
-    if (isset($_POST["end_date"])) {
+    $endDate = null;
+    if (isset($_POST["end_date"]) && $_POST["end_date"] != "") {
         $timestamp = strtotime($_POST["end_date"]);
         $endDate = date("Y-m-d H:i:s", $timestamp);
     }
@@ -208,13 +211,14 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
 
     if (!$home) {
         // Homepage was never created so insert
-        $insertStmt = $PDOX->prepare("INSERT INTO {$p}course_home (link_id, context_id, user_id, sections, meetings, start_date, end_date, course_title, course_desc, course_video, syllabus_blob_id, schedule_blob_id, picture_blob_id, prefix, instructor_name, office_location, phone, email, preferred_contact, office_hours, getting_started, about_me) values (:link_id, :context_id, :user_id, :sections, :meetings, :start_date, :end_date, :course_title, :course_desc, :course_video, :syllabus_blob_id, :schedule_blob_id, :picture_blob_id, :prefix, :instructor_name, :office_location, :phone, :email, :preferred_contact, :office_hours, :getting_started, :about_me)");
+        $insertStmt = $PDOX->prepare("INSERT INTO {$p}course_home (link_id, context_id, user_id, sections, meetings, class_location, start_date, end_date, course_title, course_desc, course_video, syllabus_blob_id, schedule_blob_id, picture_blob_id, prefix, instructor_name, office_location, phone, email, preferred_contact, office_hours, getting_started, about_me) values (:link_id, :context_id, :user_id, :sections, :meetings, :class_location, :start_date, :end_date, :course_title, :course_desc, :course_video, :syllabus_blob_id, :schedule_blob_id, :picture_blob_id, :prefix, :instructor_name, :office_location, :phone, :email, :preferred_contact, :office_hours, :getting_started, :about_me)");
         $insertStmt->execute(array(
             ":link_id" => $LINK->id,
             ":context_id" => $CONTEXT->id,
             ":user_id" => $USER->id,
             ":sections" => $sections,
             ":meetings" => $meetings,
+            ":class_location" => $classLocation,
             ":start_date" => $startDate,
             ":end_date" => $endDate,
             ":course_title" => $title,
@@ -238,6 +242,7 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
         $updateStmt = $PDOX->prepare("UPDATE {$p}course_home SET 
                                         sections = :sections,
                                         meetings = :meetings,
+                                        class_location = :class_location,
                                         start_date = :start_date,
                                         end_date = :end_date,
                                         course_title = :course_title,
@@ -259,6 +264,7 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
         $updateStmt->execute(array(
             ":sections" => $sections,
             ":meetings" => $meetings,
+            ":class_location" => $classLocation,
             ":start_date" => $startDate,
             ":end_date" => $endDate,
             ":course_title" => $title,
@@ -288,6 +294,9 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
 $OUTPUT->header();
 ?>
     <style>
+        .course-description .ck-editor__editable_inline {
+            min-height: 140px;
+        }
         .ck-editor__editable_inline {
             min-height: 200px;
         }
@@ -302,49 +311,53 @@ $OUTPUT->flashMessages();
     <form action="<?php addSession('edit.php');?>" method="post" enctype="multipart/form-data">
         <h4>Course Details</h4>
         <div class="form-group">
-            <label for="course_title">Course Title</label>
-            <input type="text" class="form-control" id="course_title" name="course_title" placeholder="e.g. Introduction to Philosophy" value="<?=$course_title?>" required>
+            <label for="course_title">Course Title <span class="text-muted">*</span></label>
+            <input type="text" class="form-control" id="course_title" name="course_title" placeholder="e.g. Introduction to Philosophy" required value="<?=$course_title?>" required>
         </div>
         <div class="form-group">
             <label for="sections">Course Section(s) <br /><small>Use comma to separate sections to separate lines</small></label>
             <input type="text" class="form-control" id="sections" name="sections" placeholder="e.g. PHL 103 01, PHL 103 02" value="<?=$sections?>">
         </div>
         <div class="form-group">
-            <label for="meetings">Course Meetings <br /><small>Use comma to separate meeting days to separate lines</small></label>
-            <input type="text" class="form-control" id="meetings" name="meetings" placeholder="e.g. MWF 10:10a - 12:05p, TR 1:00p - 2:15p" value="<?=$meetings?>">
+            <label for="meetings">Class Meetings Times <span class="text-muted">*</span><br /><small>Use comma to separate meeting days to separate lines</small></label>
+            <input type="text" class="form-control" id="meetings" name="meetings" required value="<?=$meetings?>" placeholder="e.g. MWF 10:10a - 12:05p, TR 1:00p - 2:15p">
+        </div>
+        <div class="form-group">
+            <label for="meetings">Class Location</label>
+            <input type="text" class="form-control" id="class_location" name="class_location" placeholder="e.g. MH 103 / Online via Zoom" value="<?=$class_location?>">
         </div>
         <div class="row">
             <div class="col-xs-6">
                 <div class="form-group">
-                    <label for="start">Course Start Date (optional)</label>
+                    <label for="start">Course Start Date</label>
                     <input type="text" class="form-control" id="start" name="start_date" value="<?=$start_date?>">
                 </div>
             </div>
             <div class="col-xs-6">
                 <div class="form-group">
-                    <label for="end">Course End Date (optional)</label>
+                    <label for="end">Course End Date</label>
                     <input type="text" class="form-control" id="end" name="end_date" value="<?=$end_date?>">
                 </div>
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group course-description">
             <label for="course_desc">Course Description</label>
             <textarea class="form-control" rows="5" id="course_desc" name="course_desc"><?=$course_desc?></textarea>
         </div>
         <div class="form-group">
-            <label for="video_url">Course Intro Video URL (optional)</label>
+            <label for="video_url">Course Intro Video URL</label>
             <input type="text" class="form-control" id="video_url" name="video_url" placeholder="e.g. https://udayton.warpwire.com/w/bTsBAA/" value="<?=$course_video?>">
         </div>
         <div class="row">
             <div class="col-xs-6">
                 <div class="form-group">
-                    <label for="syllabus">Course Syllabus (optional)</label>
+                    <label for="syllabus">Course Syllabus</label>
                     <input type="file" class="filepond" id="syllabus" name="syllabus[]">
                 </div>
             </div>
             <div class="col-xs-6">
                 <div class="form-group">
-                    <label for="schedule">Course Schedule (optional)</label>
+                    <label for="schedule">Course Schedule</label>
                     <input type="file" class="filepond" id="schedule" name="schedule[]">
                 </div>
             </div>
@@ -368,7 +381,7 @@ $OUTPUT->flashMessages();
             </div>
             <div class="col-xs-9">
                 <div class="form-group">
-                    <label for="instructor_name">Instructor Name</label>
+                    <label for="instructor_name">Instructor Name <span class="text-muted">*</span></label>
                     <input type="text" class="form-control" id="instructor_name" name="instructor_name" required value="<?=$instructor_name?>">
                 </div>
             </div>
@@ -377,10 +390,6 @@ $OUTPUT->flashMessages();
             <label for="picture">Profile Picture</label>
             <input type="file" class="filepond" id="picture" name="picture[]">
         </div>
-        <div class="form-group">
-            <label for="about_me">Tell your students a little about yourself. (optional)</label>
-            <textarea class="form-control" rows="5" id="about_me" name="about_me"><?=$about_me?></textarea>
-        </div>
         <div class="row">
             <div class="col-xs-6">
                 <div class="form-group">
@@ -388,8 +397,8 @@ $OUTPUT->flashMessages();
                     <input type="text" class="form-control" id="phone" name="phone" placeholder="e.g. (937) 229-2074" value="<?=$phone?>">
                 </div>
                 <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="e.g. prof1@udayton.edu" value="<?=$email?>">
+                    <label for="email">Email <span class="text-muted">*</span></label>
+                    <input type="email" class="form-control" id="email" name="email" required value="<?=$email?>">
                 </div>
             </div>
             <div class="col-xs-6">
@@ -410,8 +419,8 @@ $OUTPUT->flashMessages();
             <input type="text" class="form-control" id="office_location" name="office_location" placeholder="e.g. LTC 030" value="<?=$office_location?>">
         </div>
         <div class="form-group">
-            <label for="office_hours">Office Hours<br /><small>Use a comma to separate office hours to separate lines</small></label>
-            <input type="text" class="form-control" id="office_hours" name="office_hours" placeholder="e.g. MWF 2:00p - 3:15p, Tues. 10:00a - 11:00a" value="<?=$office_hours?>">
+            <label for="office_hours">Office Hours <span class="text-muted">*</span><br /><small>Use a comma to separate office hours to separate lines</small></label>
+            <input type="text" class="form-control" id="office_hours" name="office_hours" required value="<?=$office_hours?>" placeholder="e.g. MWF 2:00p - 3:15p, Tues. 10:00a - 11:00a">
         </div>
         <h4>Getting Started</h4>
         <div class="form-group">
@@ -432,13 +441,6 @@ $OUTPUT->footerStart();
             $("#end").datepicker();
             ClassicEditor
                 .create(document.querySelector('#course_desc'), {
-                    toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote' ]
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-            ClassicEditor
-                .create(document.querySelector('#about_me'), {
                     toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote' ]
                 })
                 .catch(error => {
