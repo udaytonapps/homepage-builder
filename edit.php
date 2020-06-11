@@ -340,13 +340,13 @@ $OUTPUT->flashMessages();
             <div class="col-xs-6">
                 <div class="form-group">
                     <label for="start">Course Start Date</label>
-                    <input type="text" class="form-control" id="start" name="start_date" value="<?=$start_date?>">
+                    <input type="text" class="form-control" id="start" name="start_date" autocomplete="off" value="<?=$start_date?>">
                 </div>
             </div>
             <div class="col-xs-6">
                 <div class="form-group">
                     <label for="end">Course End Date</label>
-                    <input type="text" class="form-control" id="end" name="end_date" value="<?=$end_date?>">
+                    <input type="text" class="form-control" id="end" name="end_date" autocomplete="off" value="<?=$end_date?>">
                 </div>
             </div>
         </div>
