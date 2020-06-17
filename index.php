@@ -38,6 +38,7 @@ $OUTPUT->header();
         font-size: 12px;
         color: #818182;
         margin-top: 2em;
+        overflow-wrap: break-word;
     }
     .profile-rating span{
         color: #495057;
