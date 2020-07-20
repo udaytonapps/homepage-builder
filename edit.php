@@ -451,14 +451,20 @@ $OUTPUT->footerStart();
             $("#end").datepicker();
             ClassicEditor
                 .create(document.querySelector('#course_desc'), {
-                    toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote' ]
+                    toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote' ],
+                    link: {
+                        addTargetToExternalLinks: true
+                    }
                 })
                 .catch(error => {
                     console.error(error);
                 });
             ClassicEditor
                 .create(document.querySelector('#getting_started'), {
-                    toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote' ]
+                    toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote' ],
+                    link: {
+                        addTargetToExternalLinks: true
+                    }
                 })
                 .catch(error => {
                     console.error(error);
