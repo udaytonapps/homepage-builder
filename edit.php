@@ -408,7 +408,7 @@ $OUTPUT->flashMessages();
                 </div>
                 <div class="form-group">
                     <label for="email">Email <span class="text-muted">*</span></label>
-                    <input type="email" class="form-control" id="email" name="email" required value="<?=$email?>">
+                    <input type="text" class="form-control" id="email" name="email" required value="<?=$email?>">
                 </div>
             </div>
             <div class="col-xs-6">
