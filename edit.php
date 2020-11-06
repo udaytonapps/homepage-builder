@@ -318,7 +318,10 @@ echo '<div class="container-fluid">';
 
 $OUTPUT->flashMessages();
 ?>
-    <form action="<?php addSession('edit.php');?>" method="post" enctype="multipart/form-data">
+    <div class="pull-right" style="padding-top:1rem;">
+        <a href="#importModal" data-toggle="modal"><span class="fas fa-file-import" aria-hidden="true"></span> Import from Previous Site</a>
+    </div>
+    <form action="<?php addSession('edit.php');?>" method="post" enctype="multipart/form-data" style="padding-bottom: 1rem;">
         <h4>Course Details</h4>
         <div class="form-group">
             <label for="course_title">Course Title <span class="text-muted">*</span></label>
@@ -438,9 +441,55 @@ $OUTPUT->flashMessages();
             <textarea class="form-control" rows="5" id="getting_started" name="getting_started"><?=$getting_started?></textarea>
         </div>
         <button type="submit" name="save" class="btn btn-primary">Save</button>
+        <a href="<?= addSession("index.php") ?>" class="btn btn-link">Cancel</a>
     </form>
 <?php
 echo '</div>'; // End container
+// Get all course homes for user
+$allHomesStmt = $PDOX->prepare("SELECT * FROM {$p}course_home WHERE user_id = :userId AND link_id != :linkId ORDER BY course_title");
+$allHomesStmt->execute(array(":userId" => $USER->id, ":linkId" => $LINK->id));
+$allHomes = $allHomesStmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+    <div id="importModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Import Homepage Content from Previous Site</h4>
+                </div>
+                <form action="import.php" method="post">
+                    <div class="modal-body">
+                        <p class="alert alert-warning">Please note that any syllabus, schedule, and profile picture files from the previous site will not be imported and will need to be re-uploaded to this site.</>
+                        <?php
+                        if ($allHomes) {
+                            echo '<div class="form-group"><label for="importSite">Select Homepage to Import</label><select class="form-control" id="importSite" name="importSite">';
+                            foreach($allHomes as $prevHome) {
+                                $sitestmt = $PDOX->prepare("SELECT title FROM {$p}lti_context WHERE context_id = :contextId;");
+                                $sitestmt->execute(array(":contextId" => $prevHome["context_id"]));
+                                $site = $sitestmt->fetch(PDO::FETCH_ASSOC);
+                                if (!$site) {
+                                    $title = $prevHome["course_title"];
+                                } else {
+                                    $title = $site["title"];
+                                }
+                                echo '<option value="'.$prevHome["home_id"].'">'.$title.'</option>';
+                            }
+                            echo '</select></div>';
+                        } else {
+                            echo '<p><em>You do not have any previously completed homepages to import from.</em></p>';
+                        }
+                        ?>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="<?= $allHomes ? 'submit' : 'button' ?>" class="btn btn-primary <?= $allHomes ? '' : 'disabled' ?>">Submit</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+<?php
 
 $OUTPUT->footerStart();
 ?>
