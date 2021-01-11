@@ -7,10 +7,11 @@ $LAUNCH = LTIX::requireData();
 
 $p = $CFG->dbprefix;
 
-if ( $USER->instructor && isset($_POST["importSite"])) {
+if ( $USER->instructor && isset($_POST["importSite"]) && is_numeric($_POST["importSite"])) {
 
+    $homeId = (int) $_POST["importSite"];
     $homeStmt = $PDOX->prepare("SELECT * FROM {$p}course_home WHERE home_id = :home_id");
-    $homeStmt->execute(array(":home_id" => $_POST["importSite"]));
+    $homeStmt->execute(array(":home_id" => $homeId));
     $home = $homeStmt->fetch(PDO::FETCH_ASSOC);
 
     if ($home) {
