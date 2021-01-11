@@ -62,7 +62,28 @@ if ( $USER->instructor && isset($_POST["importSite"]) && is_numeric($_POST["impo
             ));
         } else {
             // New record
-            $newHomeStmt = $PDOX->prepare("INSERT INTO {$p}course_home (link_id, context_id, user_id, sections, meetings, class_location, start_date, end_date, course_title, course_desc, course_video, syllabus_blob_id, schedule_blob_id, picture_blob_id, prefix, instructor_name, office_location, phone, email, preferred_contact, office_hours, getting_started, about_me)
+            $newHomeStmt = $PDOX->prepare("INSERT INTO {$p}course_home (
+                link_id, 
+                context_id, 
+                user_id, 
+                sections, 
+                meetings, 
+                class_location, 
+                start_date, 
+                end_date, 
+                course_title, 
+                course_desc, 
+                course_video, 
+                prefix, 
+                instructor_name, 
+                office_location, 
+                phone, 
+                email, 
+                preferred_contact, 
+                office_hours, 
+                getting_started, 
+                about_me
+            )
             values (
              :link_id, 
              :context_id, 
