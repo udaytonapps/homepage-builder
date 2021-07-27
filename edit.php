@@ -1,15 +1,15 @@
 <?php
 require_once "../config.php";
 
+use Tsugi\Blob\BlobUtil;
 use Tsugi\Core\LTIX;
-use \Tsugi\Blob\BlobUtil;
 
 $p = $CFG->dbprefix;
 
 // Sometimes, if the maxUpload_SIZE is exceeded, it deletes all of $_POST
 // Thus losing our session :(
-if ( $_SERVER['REQUEST_METHOD'] == 'POST' && count($_POST) == 0 ) {
-    die('Error: Maximum size of '.BlobUtil::maxUpload().'MB exceeded.');
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && count($_POST) == 0) {
+    die('Error: Maximum size of ' . BlobUtil::maxUpload() . 'MB exceeded.');
 }
 
 $LAUNCH = LTIX::requireData();
@@ -18,7 +18,7 @@ $homeStmt = $PDOX->prepare("SELECT * FROM {$p}course_home WHERE link_id = :linkI
 $homeStmt->execute(array(":linkId" => $LINK->id));
 $home = $homeStmt->fetch(PDO::FETCH_ASSOC);
 
-if($home) {
+if ($home) {
     $sections = $home["sections"];
     $meetings = $home["meetings"];
     $class_location = $home["class_location"];
@@ -64,13 +64,12 @@ if($home) {
 
 // Other times, we see an error indication on bad upload that does not delete all the $_POST
 // Upload syllabus file and add blob id to session
-if( isset($_FILES['syllabus']) && $_FILES['syllabus']['error'][0] == 1) {
-    $_SESSION['error'] = 'Error: Maximum size of '.BlobUtil::maxUpload().'MB exceeded.';
-    header( 'Location: '.addSession('edit.php') ) ;
+if (isset($_FILES['syllabus']) && $_FILES['syllabus']['error'][0] == 1) {
+    $_SESSION['error'] = 'Error: Maximum size of ' . BlobUtil::maxUpload() . 'MB exceeded.';
+    header('Location: ' . addSession('edit.php'));
     return;
 }
-if( isset($_FILES['syllabus']) && $_FILES['syllabus']['error'][0] == 0)
-{
+if (isset($_FILES['syllabus']) && $_FILES['syllabus']['error'][0] == 0) {
     $fdes = $_FILES['syllabus'];
 
     $filename = isset($fdes['name'][0]) ? basename($fdes['name'][0]) : false;
@@ -83,17 +82,17 @@ if( isset($_FILES['syllabus']) && $_FILES['syllabus']['error'][0] == 0)
 
     // Sanity-check the file
     $safety = BlobUtil::validateUpload($fdes);
-    if ( $safety !== true ) {
-        $_SESSION['error'] = "Error: ".$safety;
-        error_log("Upload Error: ".$safety);
-        header( 'Location: '.addSession('edit.php') ) ;
+    if ($safety !== true) {
+        $_SESSION['error'] = "Error: " . $safety;
+        error_log("Upload Error: " . $safety);
+        header('Location: ' . addSession('edit.php'));
         return;
     }
 
     $blob_id = BlobUtil::uploadToBlob($fdes);
-    if ( $blob_id === false ) {
-        $_SESSION['error'] = 'Problem storing file in server: '.$filename;
-        header( 'Location: '.addSession('edit.php') ) ;
+    if ($blob_id === false) {
+        $_SESSION['error'] = 'Problem storing file in server: ' . $filename;
+        header('Location: ' . addSession('edit.php'));
         return;
     }
 
@@ -101,13 +100,12 @@ if( isset($_FILES['syllabus']) && $_FILES['syllabus']['error'][0] == 0)
 }
 
 // Upload schedule file and add blob id to session
-if( isset($_FILES['schedule']) && $_FILES['schedule']['error'][0] == 1) {
-    $_SESSION['error'] = 'Error: Maximum size of '.BlobUtil::maxUpload().'MB exceeded.';
-    header( 'Location: '.addSession('edit.php') ) ;
+if (isset($_FILES['schedule']) && $_FILES['schedule']['error'][0] == 1) {
+    $_SESSION['error'] = 'Error: Maximum size of ' . BlobUtil::maxUpload() . 'MB exceeded.';
+    header('Location: ' . addSession('edit.php'));
     return;
 }
-if( isset($_FILES['schedule']) && $_FILES['schedule']['error'][0] == 0)
-{
+if (isset($_FILES['schedule']) && $_FILES['schedule']['error'][0] == 0) {
     $fdes = $_FILES['schedule'];
 
     $filename = isset($fdes['name'][0]) ? basename($fdes['name'][0]) : false;
@@ -120,17 +118,17 @@ if( isset($_FILES['schedule']) && $_FILES['schedule']['error'][0] == 0)
 
     // Sanity-check the file
     $safety = BlobUtil::validateUpload($fdes);
-    if ( $safety !== true ) {
-        $_SESSION['error'] = "Error: ".$safety;
-        error_log("Upload Error: ".$safety);
-        header( 'Location: '.addSession('edit.php') ) ;
+    if ($safety !== true) {
+        $_SESSION['error'] = "Error: " . $safety;
+        error_log("Upload Error: " . $safety);
+        header('Location: ' . addSession('edit.php'));
         return;
     }
 
     $blob_id = BlobUtil::uploadToBlob($fdes);
-    if ( $blob_id === false ) {
-        $_SESSION['error'] = 'Problem storing file in server: '.$filename;
-        header( 'Location: '.addSession('edit.php') ) ;
+    if ($blob_id === false) {
+        $_SESSION['error'] = 'Problem storing file in server: ' . $filename;
+        header('Location: ' . addSession('edit.php'));
         return;
     }
 
@@ -138,13 +136,12 @@ if( isset($_FILES['schedule']) && $_FILES['schedule']['error'][0] == 0)
 }
 
 // Upload profile picture file and add blob id to session
-if( isset($_FILES['picture']) && $_FILES['picture']['error'][0] == 1) {
-    $_SESSION['error'] = 'Error: Maximum size of '.BlobUtil::maxUpload().'MB exceeded.';
-    header( 'Location: '.addSession('edit.php') ) ;
+if (isset($_FILES['picture']) && $_FILES['picture']['error'][0] == 1) {
+    $_SESSION['error'] = 'Error: Maximum size of ' . BlobUtil::maxUpload() . 'MB exceeded.';
+    header('Location: ' . addSession('edit.php'));
     return;
 }
-if( isset($_FILES['picture']) && $_FILES['picture']['error'][0] == 0)
-{
+if (isset($_FILES['picture']) && $_FILES['picture']['error'][0] == 0) {
     $fdes = $_FILES['picture'];
 
     $filename = isset($fdes['name'][0]) ? basename($fdes['name'][0]) : false;
@@ -157,17 +154,17 @@ if( isset($_FILES['picture']) && $_FILES['picture']['error'][0] == 0)
 
     // Sanity-check the file
     $safety = BlobUtil::validateUpload($fdes);
-    if ( $safety !== true ) {
-        $_SESSION['error'] = "Error: ".$safety;
-        error_log("Upload Error: ".$safety);
-        header( 'Location: '.addSession('edit.php') ) ;
+    if ($safety !== true) {
+        $_SESSION['error'] = "Error: " . $safety;
+        error_log("Upload Error: " . $safety);
+        header('Location: ' . addSession('edit.php'));
         return;
     }
 
     $blob_id = BlobUtil::uploadToBlob($fdes);
-    if ( $blob_id === false ) {
-        $_SESSION['error'] = 'Problem storing file in server: '.$filename;
-        header( 'Location: '.addSession('edit.php') ) ;
+    if ($blob_id === false) {
+        $_SESSION['error'] = 'Problem storing file in server: ' . $filename;
+        header('Location: ' . addSession('edit.php'));
         return;
     }
 
@@ -175,7 +172,7 @@ if( isset($_FILES['picture']) && $_FILES['picture']['error'][0] == 0)
 }
 
 // File should already be uploaded if there was a new one
-if ( $_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
 
     $sections = isset($_POST["sections"]) ? $_POST["sections"] : "";
     $meetings = isset($_POST["meetings"]) ? $_POST["meetings"] : "";
@@ -297,7 +294,7 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
     }
 
     $_SESSION["success"] = "Homepage saved successfully.";
-    header( 'Location: '.addSession('index.php') ) ;
+    header('Location: ' . addSession('index.php'));
     return;
 }
 
@@ -307,6 +304,7 @@ $OUTPUT->header();
         .course-description .ck-editor__editable_inline {
             min-height: 140px;
         }
+
         .ck-editor__editable_inline {
             min-height: 200px;
         }
@@ -319,127 +317,173 @@ echo '<div class="container-fluid">';
 $OUTPUT->flashMessages();
 ?>
     <div class="pull-right" style="padding-top:1rem;">
-        <a href="#importModal" data-toggle="modal"><span class="fas fa-file-import" aria-hidden="true"></span> Import from Previous Site</a>
+        <a href="#importModal" data-toggle="modal"><span class="fas fa-file-import" aria-hidden="true"></span> Import
+            from Previous Site</a>
     </div>
-    <form action="<?php addSession('edit.php');?>" method="post" enctype="multipart/form-data" style="padding-bottom: 1rem;">
-        <h4>Course Details</h4>
-        <div class="form-group">
-            <label for="course_title">Course Title <span class="text-muted">*</span></label>
-            <input type="text" class="form-control" id="course_title" name="course_title" placeholder="e.g. Introduction to Philosophy" required value="<?=$course_title?>" required>
-        </div>
-        <div class="form-group">
-            <label for="sections">Course Section(s) <br /><small>Use comma to separate sections to separate lines</small></label>
-            <input type="text" class="form-control" id="sections" name="sections" placeholder="e.g. PHL 103 01, PHL 103 02" value="<?=$sections?>">
-        </div>
-        <div class="form-group">
-            <label for="meetings">Class Meetings Times <span class="text-muted">*</span><br /><small>Use comma to separate meeting days to separate lines</small></label>
-            <input type="text" class="form-control" id="meetings" name="meetings" required value="<?=$meetings?>" placeholder="e.g. MWF 10:10a - 12:05p, TR 1:00p - 2:15p">
-        </div>
-        <div class="form-group">
-            <label for="meetings">Class Location</label>
-            <input type="text" class="form-control" id="class_location" name="class_location" placeholder="e.g. MH 103 / Online via Zoom" value="<?=$class_location?>">
-        </div>
-        <div class="row">
-            <div class="col-xs-6">
+    <h3>Edit Homepage Information</h3>
+    <p class="lead">Use the form below to add information to your homepage. The information has been divided into four
+        tabs for ease of entry.</p>
+    <form action="<?php addSession('edit.php'); ?>" method="post" enctype="multipart/form-data"
+          style="padding-bottom: 1rem;">
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#details">Course Details</a></li>
+            <li><a data-toggle="tab" href="#instructor">Instructor Info.</a></li>
+            <li><a data-toggle="tab" href="#desc">Course Description</a></li>
+            <li><a data-toggle="tab" href="#started">Getting Started</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="details" class="tab-pane fade in active">
+                <h4>Course Details</h4>
                 <div class="form-group">
-                    <label for="start">Course Start Date</label>
-                    <input type="text" class="form-control" id="start" name="start_date" autocomplete="off" value="<?=$start_date?>">
+                    <label for="course_title">Course Title <span class="text-muted">*</span></label>
+                    <input type="text" class="form-control" id="course_title" name="course_title"
+                           placeholder="e.g. Introduction to Philosophy" required value="<?= $course_title ?>" required>
                 </div>
-            </div>
-            <div class="col-xs-6">
-                <div class="form-group">
-                    <label for="end">Course End Date</label>
-                    <input type="text" class="form-control" id="end" name="end_date" autocomplete="off" value="<?=$end_date?>">
-                </div>
-            </div>
-        </div>
-        <div class="form-group course-description">
-            <label for="course_desc">Course Description</label>
-            <textarea class="form-control" rows="5" id="course_desc" name="course_desc"><?=$course_desc?></textarea>
-        </div>
-        <div class="form-group">
-            <label for="video_url">Course Intro Video URL</label>
-            <input type="text" class="form-control" id="video_url" name="video_url" placeholder="e.g. https://udayton.warpwire.com/w/bTsBAA/" value="<?=$course_video?>">
-        </div>
-        <div class="row">
-            <div class="col-xs-6">
-                <div class="form-group">
-                    <label for="syllabus">Course Syllabus</label>
-                    <input type="file" class="filepond" id="syllabus" name="syllabus[]">
-                </div>
-            </div>
-            <div class="col-xs-6">
-                <div class="form-group">
-                    <label for="schedule">Course Schedule</label>
-                    <input type="file" class="filepond" id="schedule" name="schedule[]">
-                </div>
-            </div>
-        </div>
-        <h4>Instructor Details</h4>
-        <div class="row">
-            <div class="col-xs-3">
-                <div class="form-group">
-                    <label for="prefix">Instructor Title</label>
-                    <select class="form-control" id="prefix" name="prefix">
-                        <option value="">None</option>
-                        <option <?= $prefix == 'Professor' ? 'selected' :''?>>Professor</option>
-                        <option <?= $prefix == 'Instructor' ? 'selected' :''?>>Instructor</option>
-                        <option <?= $prefix == 'Prof.' ? 'selected' :''?>>Prof.</option>
-                        <option <?= $prefix == 'Dr.' ? 'selected' :''?>>Dr.</option>
-                        <option <?= $prefix == 'Mr.' ? 'selected' :''?>>Mr.</option>
-                        <option <?= $prefix == 'Mrs.' ? 'selected' :''?>>Mrs.</option>
-                        <option <?= $prefix == 'Ms.' ? 'selected' :''?>>Ms.</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-xs-9">
-                <div class="form-group">
-                    <label for="instructor_name">Instructor Name <span class="text-muted">*</span></label>
-                    <input type="text" class="form-control" id="instructor_name" name="instructor_name" required value="<?=$instructor_name?>">
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="picture">Profile Picture</label>
-            <input type="file" class="filepond" id="picture" name="picture[]">
-        </div>
-        <div class="row">
-            <div class="col-xs-6">
-                <div class="form-group">
-                    <label for="phone">Phone Number</label>
-                    <input type="text" class="form-control" id="phone" name="phone" placeholder="e.g. (937) 229-2074" value="<?=$phone?>">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label for="syllabus">Course Syllabus</label>
+                            <input type="file" class="filepond" id="syllabus" name="syllabus[]">
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label for="schedule">Course Schedule</label>
+                            <input type="file" class="filepond" id="schedule" name="schedule[]">
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label for="email">Email <span class="text-muted">*</span></label>
-                    <input type="text" class="form-control" id="email" name="email" required value="<?=$email?>">
+                    <label for="sections">Course Section(s) <br/><small>Use comma to separate sections to separate
+                            lines</small></label>
+                    <input type="text" class="form-control" id="sections" name="sections"
+                           placeholder="e.g. PHL 103 01, PHL 103 02" value="<?= $sections ?>">
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label for="start">Course Start Date</label>
+                            <input type="text" class="form-control" id="start" name="start_date" autocomplete="off"
+                                   value="<?= $start_date ?>">
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label for="end">Course End Date</label>
+                            <input type="text" class="form-control" id="end" name="end_date" autocomplete="off"
+                                   value="<?= $end_date ?>">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="meetings">Class Meetings Times <span class="text-muted">*</span><br/><small>Use comma to
+                            separate meeting days to separate lines</small></label>
+                    <input type="text" class="form-control" id="meetings" name="meetings" required
+                           value="<?= $meetings ?>" placeholder="e.g. MWF 10:10a - 12:05p, TR 1:00p - 2:15p">
+                </div>
+                <div class="form-group">
+                    <label for="class_location">Class Location</label>
+                    <input type="text" class="form-control" id="class_location" name="class_location"
+                           placeholder="e.g. MH 103 / Online via Zoom" value="<?= $class_location ?>">
                 </div>
             </div>
-            <div class="col-xs-6">
-                <h5>Preferred Method of Contact</h5>
-                <div class="radio">
-                    <label><input type="radio" value="none" name="preferred" <?= $preferred_contact != 'phone' && $preferred_contact != 'email' ? 'checked' : '' ?>>No Preference</label>
+            <div id="instructor" class="tab-pane fade">
+                <h4>Instructor Information</h4>
+                <div class="row">
+                    <div class="col-xs-3">
+                        <div class="form-group">
+                            <label for="prefix">Instructor Title</label>
+                            <select class="form-control" id="prefix" name="prefix">
+                                <option value="">None</option>
+                                <option <?= $prefix == 'Professor' ? 'selected' : '' ?>>Professor</option>
+                                <option <?= $prefix == 'Instructor' ? 'selected' : '' ?>>Instructor</option>
+                                <option <?= $prefix == 'Prof.' ? 'selected' : '' ?>>Prof.</option>
+                                <option <?= $prefix == 'Dr.' ? 'selected' : '' ?>>Dr.</option>
+                                <option <?= $prefix == 'Mr.' ? 'selected' : '' ?>>Mr.</option>
+                                <option <?= $prefix == 'Mrs.' ? 'selected' : '' ?>>Mrs.</option>
+                                <option <?= $prefix == 'Ms.' ? 'selected' : '' ?>>Ms.</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-xs-9">
+                        <div class="form-group">
+                            <label for="instructor_name">Instructor Name <span class="text-muted">*</span></label>
+                            <input type="text" class="form-control" id="instructor_name" name="instructor_name" required
+                                   value="<?= $instructor_name ?>">
+                        </div>
+                    </div>
                 </div>
-                <div class="radio">
-                    <label><input type="radio" value="phone" name="preferred" <?= $preferred_contact == 'phone' ? 'checked' : '' ?>>Phone</label>
+                <div class="form-group">
+                    <label for="picture">Profile Picture</label>
+                    <input type="file" class="filepond" id="picture" name="picture[]">
                 </div>
-                <div class="radio">
-                    <label><input type="radio" value="email" name="preferred" <?= $preferred_contact == 'email' ? 'checked' : '' ?>>Email</label>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="text" class="form-control" id="phone" name="phone"
+                                   placeholder="e.g. (937) 229-2074" value="<?= $phone ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email <span class="text-muted">*</span></label>
+                            <input type="text" class="form-control" id="email" name="email" required
+                                   value="<?= $email ?>">
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <h5>Preferred Method of Contact</h5>
+                        <div class="radio">
+                            <label><input type="radio" value="none"
+                                          name="preferred" <?= $preferred_contact != 'phone' && $preferred_contact != 'email' ? 'checked' : '' ?>>No
+                                Preference</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" value="phone"
+                                          name="preferred" <?= $preferred_contact == 'phone' ? 'checked' : '' ?>>Phone</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" value="email"
+                                          name="preferred" <?= $preferred_contact == 'email' ? 'checked' : '' ?>>Email</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="office_location">Office Location</label>
+                    <input type="text" class="form-control" id="office_location" name="office_location"
+                           placeholder="e.g. LTC 030" value="<?= $office_location ?>">
+                </div>
+                <div class="form-group">
+                    <label for="office_hours">Office Hours <span class="text-muted">*</span><br/><small>Use a comma to
+                            separate office hours to separate lines</small></label>
+                    <input type="text" class="form-control" id="office_hours" name="office_hours" required
+                           value="<?= $office_hours ?>" placeholder="e.g. MWF 2:00p - 3:15p, Tues. 10:00a - 11:00a">
+                </div>
+            </div>
+            <div id="desc" class="tab-pane fade">
+                <h4>Course Description</h4>
+                <div class="form-group course-description">
+                    <label for="course_desc">Course Description</label>
+                    <textarea class="form-control" rows="5" id="course_desc"
+                              name="course_desc"><?= $course_desc ?></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="video_url">Course Intro Video URL</label>
+                    <input type="text" class="form-control" id="video_url" name="video_url"
+                           placeholder="e.g. https://udayton.warpwire.com/w/bTsBAA/" value="<?= $course_video ?>">
+                </div>
+            </div>
+            <div id="started" class="tab-pane fade">
+                <h4>Getting Started</h4>
+                <div class="form-group">
+                    <label for="getting_started">How should students get started in your course or Isidore site?</label>
+                    <textarea class="form-control" rows="5" id="getting_started"
+                              name="getting_started"><?= $getting_started ?></textarea>
                 </div>
             </div>
         </div>
-        <div class="form-group">
-            <label for="office_location">Office Location</label>
-            <input type="text" class="form-control" id="office_location" name="office_location" placeholder="e.g. LTC 030" value="<?=$office_location?>">
-        </div>
-        <div class="form-group">
-            <label for="office_hours">Office Hours <span class="text-muted">*</span><br /><small>Use a comma to separate office hours to separate lines</small></label>
-            <input type="text" class="form-control" id="office_hours" name="office_hours" required value="<?=$office_hours?>" placeholder="e.g. MWF 2:00p - 3:15p, Tues. 10:00a - 11:00a">
-        </div>
-        <h4>Getting Started</h4>
-        <div class="form-group">
-            <label for="getting_started">How should students get started in your course or Isidore site?</label>
-            <textarea class="form-control" rows="5" id="getting_started" name="getting_started"><?=$getting_started?></textarea>
-        </div>
+        <hr>
+        <h5>All finished? Click "Save" to save your information and return to the main page.</h5>
         <button type="submit" name="save" class="btn btn-primary">Save</button>
         <a href="<?= addSession("index.php") ?>" class="btn btn-link">Cancel</a>
     </form>
@@ -459,11 +503,13 @@ $allHomes = $allHomesStmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
                 <form action="import.php" method="post">
                     <div class="modal-body">
-                        <p class="alert alert-warning">Please note that any syllabus, schedule, and profile picture files from the previous site will not be imported and will need to be re-uploaded to this site.</>
+                        <p class="alert alert-warning">Please note that any syllabus, schedule, and profile picture
+                            files from the previous site will not be imported and will need to be re-uploaded to this
+                            site.</>
                         <?php
                         if ($allHomes) {
                             echo '<div class="form-group"><label for="importSite">Select Homepage to Import</label><select class="form-control" id="importSite" name="importSite">';
-                            foreach($allHomes as $prevHome) {
+                            foreach ($allHomes as $prevHome) {
                                 $sitestmt = $PDOX->prepare("SELECT title FROM {$p}lti_context WHERE context_id = :contextId;");
                                 $sitestmt->execute(array(":contextId" => $prevHome["context_id"]));
                                 $site = $sitestmt->fetch(PDO::FETCH_ASSOC);
@@ -472,7 +518,7 @@ $allHomes = $allHomesStmt->fetchAll(PDO::FETCH_ASSOC);
                                 } else {
                                     $title = $site["title"];
                                 }
-                                echo '<option value="'.$prevHome["home_id"].'">'.$title.'</option>';
+                                echo '<option value="' . $prevHome["home_id"] . '">' . $title . '</option>';
                             }
                             echo '</select></div>';
                         } else {
@@ -481,7 +527,9 @@ $allHomes = $allHomesStmt->fetchAll(PDO::FETCH_ASSOC);
                         ?>
                     </div>
                     <div class="modal-footer">
-                        <button type="<?= $allHomes ? 'submit' : 'button' ?>" class="btn btn-primary <?= $allHomes ? '' : 'disabled' ?>">Submit</button>
+                        <button type="<?= $allHomes ? 'submit' : 'button' ?>"
+                                class="btn btn-primary <?= $allHomes ? '' : 'disabled' ?>">Submit
+                        </button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     </div>
                 </form>
@@ -500,7 +548,7 @@ $OUTPUT->footerStart();
             $("#end").datepicker();
             ClassicEditor
                 .create(document.querySelector('#course_desc'), {
-                    toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote' ],
+                    toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote'],
                     link: {
                         addTargetToExternalLinks: true
                     }
@@ -510,7 +558,7 @@ $OUTPUT->footerStart();
                 });
             ClassicEditor
                 .create(document.querySelector('#getting_started'), {
-                    toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote' ],
+                    toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote'],
                     link: {
                         addTargetToExternalLinks: true
                     }
@@ -543,7 +591,7 @@ $OUTPUT->footerStart();
             cropResizeScrollRectOnly: true
         });
 
-        const pond_picture = FilePond.create( document.querySelector('#picture'), {
+        const pond_picture = FilePond.create(document.querySelector('#picture'), {
             acceptedFileTypes: ['image/*'],
             labelIdle: '<span class="filepond-main-label">Drag & Drop Your Photo or Click to Browse</span>',
             imageResizeTargetHeight: 400,
@@ -555,14 +603,14 @@ $OUTPUT->footerStart();
             },
             files: [
                 <?php
-                    if ($_SESSION['picture'] && $_SESSION['picture'] != null) {
-                        echo '{source: "'.addSession($_SESSION['picture']).'"}';
-                    }
+                if ($_SESSION['picture'] && $_SESSION['picture'] != null) {
+                    echo '{source: "' . addSession($_SESSION['picture']) . '"}';
+                }
                 ?>
             ]
         });
 
-        const pond_syllabus = FilePond.create( document.querySelector('#syllabus'), {
+        const pond_syllabus = FilePond.create(document.querySelector('#syllabus'), {
             server: {
                 process: 'edit.php?PHPSESSID=<?php echo session_id() ?>',
                 revert: 'delete-syllabus.php?PHPSESSID=<?php echo session_id() ?>'
@@ -570,13 +618,13 @@ $OUTPUT->footerStart();
             files: [
                 <?php
                 if ($_SESSION['syllabus'] && $_SESSION['syllabus'] != null) {
-                    echo '{source: "'.addSession($_SESSION['syllabus']).'"}';
+                    echo '{source: "' . addSession($_SESSION['syllabus']) . '"}';
                 }
                 ?>
             ]
         });
 
-        const pond_schedule = FilePond.create( document.querySelector('#schedule'), {
+        const pond_schedule = FilePond.create(document.querySelector('#schedule'), {
             server: {
                 process: 'edit.php?PHPSESSID=<?php echo session_id() ?>',
                 revert: 'delete-schedule.php?PHPSESSID=<?php echo session_id() ?>'
@@ -584,7 +632,7 @@ $OUTPUT->footerStart();
             files: [
                 <?php
                 if ($_SESSION['schedule'] && $_SESSION['schedule'] != null) {
-                    echo '{source: "'.addSession($_SESSION['schedule']).'"}';
+                    echo '{source: "' . addSession($_SESSION['schedule']) . '"}';
                 }
                 ?>
             ]
