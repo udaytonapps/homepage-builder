@@ -483,7 +483,7 @@ $OUTPUT->flashMessages();
             </div>
         </div>
         <hr>
-        <h5>All finished? Click "Save" to save your information and return to the main page.</h5>
+        <h5>All finished? Click "Save" to save your changes on all tabs and return to the main page.</h5>
         <button type="submit" name="save" class="btn btn-primary">Save</button>
         <a href="<?= addSession("index.php") ?>" class="btn btn-link">Cancel</a>
     </form>
