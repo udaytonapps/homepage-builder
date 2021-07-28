@@ -45,7 +45,7 @@ if ($home) {
     $class_location = '';
     $start_date = '';
     $end_date = '';
-    $course_title = '';
+    $course_title = $CONTEXT->title;
     $course_desc = '';
     $course_video = '';
     $prefix = '';
@@ -304,6 +304,22 @@ $OUTPUT->header();
         .course-description .ck-editor__editable_inline {
             min-height: 140px;
         }
+        body {
+            background: #eee;
+        }
+        .tab-content {
+            background: #fff;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+        .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+            color: #333;
+            opacity: 1;
+        }
+        .nav-tabs > li:not(.active) {
+            background: #efefef;
+        }
 
         .ck-editor__editable_inline {
             min-height: 200px;
@@ -326,36 +342,36 @@ $OUTPUT->flashMessages();
     <form action="<?php addSession('edit.php'); ?>" method="post" enctype="multipart/form-data"
           style="padding-bottom: 1rem;">
         <ul class="nav nav-tabs">
-            <li class="active"><a data-toggle="tab" href="#details">Course Details</a></li>
-            <li><a data-toggle="tab" href="#instructor">Instructor Info.</a></li>
-            <li><a data-toggle="tab" href="#desc">Course Description</a></li>
-            <li><a data-toggle="tab" href="#started">Getting Started</a></li>
+            <li class="active"><a id="details-tab-link" data-toggle="tab" href="#details">1. Course Details <span class="fa fa-arrow-right" aria-hidden="true"></span></a></li>
+            <li><a id="instructor-tab-link" data-toggle="tab" href="#instructor">2. Instructor Info. <span class="fa fa-arrow-right" aria-hidden="true"></span></a></li>
+            <li><a id="desc-tab-link" data-toggle="tab" href="#desc">3. Course Description <span class="fa fa-arrow-right" aria-hidden="true"></span></a></li>
+            <li><a id="started-tab-link" data-toggle="tab" href="#started">4. Getting Started <span class="fa fa-save" aria-hidden="true"></span></a></li>
         </ul>
 
         <div class="tab-content">
             <div id="details" class="tab-pane fade in active">
                 <h4>Course Details</h4>
                 <div class="form-group">
-                    <label for="course_title">Course Title <span class="text-muted">*</span></label>
+                    <label for="course_title">Title</label>
                     <input type="text" class="form-control" id="course_title" name="course_title"
-                           placeholder="e.g. Introduction to Philosophy" required value="<?= $course_title ?>" required>
+                           placeholder="e.g. Introduction to Philosophy" value="<?= $course_title ?>">
                 </div>
                 <div class="row">
                     <div class="col-xs-6">
                         <div class="form-group">
-                            <label for="syllabus">Course Syllabus</label>
+                            <label for="syllabus">Syllabus</label>
                             <input type="file" class="filepond" id="syllabus" name="syllabus[]">
                         </div>
                     </div>
                     <div class="col-xs-6">
                         <div class="form-group">
-                            <label for="schedule">Course Schedule</label>
+                            <label for="schedule">Schedule</label>
                             <input type="file" class="filepond" id="schedule" name="schedule[]">
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="sections">Course Section(s) <br/><small>Use comma to separate sections to separate
+                    <label for="sections">Section(s) <br/><small>Use comma to separate sections to separate
                             lines</small></label>
                     <input type="text" class="form-control" id="sections" name="sections"
                            placeholder="e.g. PHL 103 01, PHL 103 02" value="<?= $sections ?>">
@@ -363,37 +379,39 @@ $OUTPUT->flashMessages();
                 <div class="row">
                     <div class="col-xs-6">
                         <div class="form-group">
-                            <label for="start">Course Start Date</label>
+                            <label for="start">Start Date</label>
                             <input type="text" class="form-control" id="start" name="start_date" autocomplete="off"
                                    value="<?= $start_date ?>">
                         </div>
                     </div>
                     <div class="col-xs-6">
                         <div class="form-group">
-                            <label for="end">Course End Date</label>
+                            <label for="end">End Date</label>
                             <input type="text" class="form-control" id="end" name="end_date" autocomplete="off"
                                    value="<?= $end_date ?>">
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="meetings">Class Meetings Times <span class="text-muted">*</span><br/><small>Use comma to
+                    <label for="meetings">Meetings Times<br/><small>Use comma to
                             separate meeting days to separate lines</small></label>
-                    <input type="text" class="form-control" id="meetings" name="meetings" required
+                    <input type="text" class="form-control" id="meetings" name="meetings"
                            value="<?= $meetings ?>" placeholder="e.g. MWF 10:10a - 12:05p, TR 1:00p - 2:15p">
                 </div>
                 <div class="form-group">
-                    <label for="class_location">Class Location</label>
+                    <label for="class_location">Location</label>
                     <input type="text" class="form-control" id="class_location" name="class_location"
                            placeholder="e.g. MH 103 / Online via Zoom" value="<?= $class_location ?>">
                 </div>
+                <hr>
+                <a id="details-next" class="btn btn-link" data-toggle="tab" href="javascript:void(0);">Next Section <span class="fa fa-arrow-right" aria-hidden="true"></span></a>
             </div>
             <div id="instructor" class="tab-pane fade">
                 <h4>Instructor Information</h4>
                 <div class="row">
-                    <div class="col-xs-3">
+                    <div class="col-xs-6">
                         <div class="form-group">
-                            <label for="prefix">Instructor Title</label>
+                            <label for="prefix">Title</label>
                             <select class="form-control" id="prefix" name="prefix">
                                 <option value="">None</option>
                                 <option <?= $prefix == 'Professor' ? 'selected' : '' ?>>Professor</option>
@@ -405,33 +423,21 @@ $OUTPUT->flashMessages();
                                 <option <?= $prefix == 'Ms.' ? 'selected' : '' ?>>Ms.</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="col-xs-9">
                         <div class="form-group">
-                            <label for="instructor_name">Instructor Name <span class="text-muted">*</span></label>
-                            <input type="text" class="form-control" id="instructor_name" name="instructor_name" required
+                            <label for="instructor_name">Name</label>
+                            <input type="text" class="form-control" id="instructor_name" name="instructor_name"
                                    value="<?= $instructor_name ?>">
                         </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="picture">Profile Picture</label>
-                    <input type="file" class="filepond" id="picture" name="picture[]">
-                </div>
-                <div class="row">
-                    <div class="col-xs-6">
                         <div class="form-group">
                             <label for="phone">Phone Number</label>
                             <input type="text" class="form-control" id="phone" name="phone"
                                    placeholder="e.g. (937) 229-2074" value="<?= $phone ?>">
                         </div>
                         <div class="form-group">
-                            <label for="email">Email <span class="text-muted">*</span></label>
-                            <input type="text" class="form-control" id="email" name="email" required
+                            <label for="email">Email</label>
+                            <input type="text" class="form-control" id="email" name="email"
                                    value="<?= $email ?>">
                         </div>
-                    </div>
-                    <div class="col-xs-6">
                         <h5>Preferred Method of Contact</h5>
                         <div class="radio">
                             <label><input type="radio" value="none"
@@ -447,6 +453,12 @@ $OUTPUT->flashMessages();
                                           name="preferred" <?= $preferred_contact == 'email' ? 'checked' : '' ?>>Email</label>
                         </div>
                     </div>
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label for="picture">Profile Picture</label>
+                            <input type="file" class="filepond" id="picture" name="picture[]">
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="office_location">Office Location</label>
@@ -454,24 +466,27 @@ $OUTPUT->flashMessages();
                            placeholder="e.g. LTC 030" value="<?= $office_location ?>">
                 </div>
                 <div class="form-group">
-                    <label for="office_hours">Office Hours <span class="text-muted">*</span><br/><small>Use a comma to
+                    <label for="office_hours">Office Hours<br/><small>Use a comma to
                             separate office hours to separate lines</small></label>
-                    <input type="text" class="form-control" id="office_hours" name="office_hours" required
+                    <input type="text" class="form-control" id="office_hours" name="office_hours"
                            value="<?= $office_hours ?>" placeholder="e.g. MWF 2:00p - 3:15p, Tues. 10:00a - 11:00a">
                 </div>
+                <hr>
+                <a id="instructor-next" class="btn btn-link" data-toggle="tab" href="javascript:void(0);">Next Section <span class="fa fa-arrow-right" aria-hidden="true"></span></a>
             </div>
             <div id="desc" class="tab-pane fade">
-                <h4>Course Description</h4>
                 <div class="form-group course-description">
                     <label for="course_desc">Course Description</label>
                     <textarea class="form-control" rows="5" id="course_desc"
                               name="course_desc"><?= $course_desc ?></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="video_url">Course Intro Video URL</label>
+                    <label for="video_url">Intro Video URL</label>
                     <input type="text" class="form-control" id="video_url" name="video_url"
                            placeholder="e.g. https://udayton.warpwire.com/w/bTsBAA/" value="<?= $course_video ?>">
                 </div>
+                <hr>
+                <a id="desc-next" class="btn btn-link" data-toggle="tab" href="javascript:void(0);">Next Section <span class="fa fa-arrow-right" aria-hidden="true"></span></a>
             </div>
             <div id="started" class="tab-pane fade">
                 <h4>Getting Started</h4>
@@ -480,6 +495,8 @@ $OUTPUT->flashMessages();
                     <textarea class="form-control" rows="5" id="getting_started"
                               name="getting_started"><?= $getting_started ?></textarea>
                 </div>
+                <hr>
+                <p><em>Click "Save" below to save your changes and return to the main page.</em></p>
             </div>
         </div>
         <hr>
@@ -544,6 +561,16 @@ $OUTPUT->footerStart();
     <script src="https://cdn.ckeditor.com/ckeditor5/19.0.0/classic/ckeditor.js"></script>
     <script>
         $(document).ready(function () {
+            $("#details-next").on("click", function() {
+                $("#instructor-tab-link").click();
+            });
+            $("#instructor-next").on("click", function() {
+                $("#desc-tab-link").click();
+            });
+            $("#desc-next").on("click", function() {
+                $("#started-tab-link").click();
+            });
+
             $("#start").datepicker();
             $("#end").datepicker();
             ClassicEditor
