@@ -333,11 +333,11 @@ echo '<div class="container-fluid">';
 $OUTPUT->flashMessages();
 ?>
     <div class="pull-right" style="padding-top:1rem;">
-        <a href="#importModal" data-toggle="modal"><span class="fas fa-file-import" aria-hidden="true"></span> Import
+        <a href="#importModal" class="btn btn-link" data-toggle="modal"><span class="fas fa-file-import" aria-hidden="true"></span> Import
             from Previous Site</a>
     </div>
     <h3>Edit Homepage Information</h3>
-    <p class="lead">Use the form below to add information to your homepage. The information has been divided into four
+    <p>Use the form below to add information to your homepage. The information has been divided into four
         tabs for ease of entry.</p>
     <form action="<?php addSession('edit.php'); ?>" method="post" enctype="multipart/form-data"
           style="padding-bottom: 1rem;">
@@ -371,7 +371,7 @@ $OUTPUT->flashMessages();
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="sections">Section(s) <br/><small>Use comma to separate sections to separate
+                    <label for="sections">Section(s) <br/><small class="text-muted">Use comma to separate sections to separate
                             lines</small></label>
                     <input type="text" class="form-control" id="sections" name="sections"
                            placeholder="e.g. PHL 103 01, PHL 103 02" value="<?= $sections ?>">
@@ -393,7 +393,7 @@ $OUTPUT->flashMessages();
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="meetings">Meetings Times<br/><small>Use comma to
+                    <label for="meetings">Meetings Times<br/><small class="text-muted">Use comma to
                             separate meeting days to separate lines</small></label>
                     <input type="text" class="form-control" id="meetings" name="meetings"
                            value="<?= $meetings ?>" placeholder="e.g. MWF 10:10a - 12:05p, TR 1:00p - 2:15p">
@@ -475,8 +475,9 @@ $OUTPUT->flashMessages();
                 <a id="instructor-next" class="btn btn-link" data-toggle="tab" href="javascript:void(0);">Next Section <span class="fa fa-arrow-right" aria-hidden="true"></span></a>
             </div>
             <div id="desc" class="tab-pane fade">
+                <h4>Course Description</h4>
                 <div class="form-group course-description">
-                    <label for="course_desc">Course Description</label>
+                    <label for="course_desc">At a high level, what would you want students to know about this course?</label>
                     <textarea class="form-control" rows="5" id="course_desc"
                               name="course_desc"><?= $course_desc ?></textarea>
                 </div>

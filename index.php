@@ -27,11 +27,9 @@ $OUTPUT->header();
     <style>
         body {
         }
-        .profile-img img {
-            max-width: 100%;
-            max-height: 125px;
-            width: auto;
-            height: auto;
+        .profile-img {
+            padding: 1rem 2rem;
+            text-align: center;
         }
 
         .profile-head h5 {
@@ -47,6 +45,11 @@ $OUTPUT->header();
         .profile-rating span {
             color: #495057;
             font-weight: 600;
+            padding-left: 22px;
+        }
+
+        .profile-rating span:first-of-type {
+            padding-left: 0;
         }
 
         .profile-work {
@@ -103,14 +106,20 @@ if ($USER->instructor) {
         </h4>
     </div>
     <div style="padding:1em 2em;">
-        <div class="row">
+        <?php
+        $sections = $home["sections"] ? explode(',', $home["sections"]) : false;
+        $meetings = $home["meetings"] ? explode(',', $home["meetings"]) : false;
+        if (($home["syllabus_blob_id"] && $home["syllabus_blob_id"] != "") || ($home["schedule_blob_id"] && $home["schedule_blob_id"] != "") || ($sections && count($sections) > 0) || (isset($home['start_date']) && $home["start_date"] != '') || (isset($home['end_date']) && $home["end_date"] != '') || ($meetings && count($meetings) > 0) || (isset($home["class_location"]) && $home["class_location"] != ''))
+        {
+        ?>
+        <div class="row"> <!-- Course details row -->
             <div class="col-12"><h5>Course Details</h5></div>
+            <?php
+            if (($home["syllabus_blob_id"] && $home["syllabus_blob_id"] != "") || ($home["schedule_blob_id"] && $home["schedule_blob_id"] != "")) {
+            ?>
             <div class="col-md-4 col-sm-5 col-12">
-                <?php
-                if (($home["syllabus_blob_id"] && $home["syllabus_blob_id"] != "") || ($home["schedule_blob_id"] && $home["schedule_blob_id"] != "")) {
-                    ?>
                     <p class="profile-rating text-uppercase" style="margin-top:0;">
-                        Course Documents</p>
+                        <span class="far fa-fw fa-file-alt" aria-hidden="true" style="color: #818182;"></span> Course Documents</p>
                     <div class="profile-work pb-2">
                         <?php
                         $syllabus_url = BlobUtil::getAccessUrlForBlob($home["syllabus_blob_id"], Output::getUtilUrl('/public_blob_serve.php'));
@@ -137,18 +146,21 @@ if ($USER->instructor) {
                         }
                         ?>
                     </div>
-                    <?php
-                }
-                ?>
             </div>
+                <?php
+            }
+            ?>
             <div class="col-md-8 col-sm-7 col-12">
                 <div class="row">
+                    <?php
+                    if (($sections && count($sections) > 0) || (isset($home['start_date']) && $home["start_date"] != '') || (isset($home['end_date']) && $home["end_date"] != '')) {
+                    ?>
                     <div class="col-sm-6 col-12">
                         <?php
-                        $sections = explode(',', $home["sections"]);
                         if (count($sections) > 0) {
                             ?>
                             <p class="profile-rating" style="margin-top:0;">
+                                <span class="far fa-fw fa-cube" style="color:#818182;"></span>
                                 SECTIONS<br/>
                                 <?php
                                 foreach ($sections as $section) {
@@ -171,23 +183,28 @@ if ($USER->instructor) {
                             }
                             ?>
                             <p class="profile-rating" style="margin-top:0;">
+                                <span class="far fa-fw fa-calendar" style="color:#818182;"></span>
                                 DATES<br/>
                                 <span>
                             <?= $formattedStartDate ?>
                             <?= $formattedStartDate != '' && $formattedEndDate != '' ? ' - ' : '' ?>
                             <?= $formattedEndDate ?>
-                        </span>
+                                </span>
                             </p>
                             <?php
                         }
                         ?>
                     </div>
+                    <?php
+                    }
+                    if (($meetings && count($meetings) > 0) || (isset($home["class_location"]) && $home["class_location"] != '')) {
+                    ?>
                     <div class="col-sm-6 col-12">
                         <?php
-                        $meetings = explode(',', $home["meetings"]);
                         if (count($meetings) > 0) {
                             ?>
                             <p class="profile-rating" style="margin-top:0;">
+                                <span class="far fa-fw fa-clock" style="color:#818182;"></span>
                                 CLASS TIMES<br/>
                                 <?php
                                 foreach ($meetings as $meeting) {
@@ -200,6 +217,7 @@ if ($USER->instructor) {
                         if (isset($home["class_location"]) && $home["class_location"] != '') {
                             ?>
                             <p class="profile-rating" style="margin-top:0;">
+                                <span class="far fa-fw fa-building" style="color:#818182;"></span>
                                 CLASS LOCATION<br/>
                                 <span><?= $home["class_location"] ?></span>
                             </p>
@@ -207,78 +225,113 @@ if ($USER->instructor) {
                         }
                         ?>
                     </div>
+                    <?php
+                    }
+                    ?>
                 </div>
             </div>
+        </div>
+        <?php
+        }
+        $profile_url = BlobUtil::getAccessUrlForBlob($home["picture_blob_id"], Output::getUtilUrl('/public_blob_serve.php'));
+        $office_hours = $home["office_hours"] ? explode(',', $home["office_hours"]) : false;
+        if (($home["picture_blob_id"] && $home["picture_blob_id"] != "" && $profile_url) ||
+        ($home['instructor_name'] && $home['instructor_name'] != "") ||
+        (isset($home['phone']) && $home['phone'] !== '') || (isset($home['email']) && $home['email'] !== '') ||
+        (isset($home['office_location']) && $home['office_location'] !== '') || ($office_hours && count($office_hours) > 0))
+        {
+        ?>
+        <div class="row"> <!-- Instructor info row -->
             <div class="col-12">
                 <hr>
                 <h5>Instructor Information</h5>
                 <div class="row">
-                    <div class="col-sm-4 col-12">
-                        <?php
-                        $profile_url = BlobUtil::getAccessUrlForBlob($home["picture_blob_id"], Output::getUtilUrl('/public_blob_serve.php'));
-                        if ($home["picture_blob_id"] && $home["picture_blob_id"] != "" && $profile_url) {
-                            ?>
+                    <?php
+                    if ($home["picture_blob_id"] && $home["picture_blob_id"] != "" && $profile_url) {
+                        ?>
+                        <div class="col-sm-4 col-12">
                             <div class="profile-img">
-                                <img class="img-rounded" alt="<?= $home['instructor_name'] ?>"
+                                <img class="img-rounded img-fluid" alt="<?= $home['instructor_name'] ?>"
                                      src="<?= addsession($profile_url) ?>"/>
                             </div>
-                            <h4 class="font-weight-light">
-                                <small class="font-weight-normal text-muted"><?= $home['prefix'] ?></small><br><?= $home['instructor_name'] ?>
-                            </h4>
-                            <?php
-                        }
-                        ?>
-                    </div>
-                    <div class="profile-head col-sm-4 col-12">
+                        </div>
                         <?php
-                        if ((isset($home['phone']) && $home['phone'] !== '') || (isset($home['email']) && $home['email'] !== '')) {
-                            if (isset($home['phone']) && $home['phone'] !== '') {
-                                ?>
-                                <p class="profile-rating mb-3 mt-2">
-                                    <span class="fas fa-fw fa-phone" style="color:#818182;"></span>
-                                    PHONE<br><span><?= $home['phone'] ?></span> <?= $home['preferred_contact'] == 'phone' ? ' (preferred)' : '' ?>
-                                    <br/>
-                                </p>
-                                <?php
-                            }
-                            if (isset($home['email']) && $home['email'] !== '') {
-                                ?>
-                                <p class="profile-rating mb-3 mt-2">
-                                    <span class="fas fa-fw fa-envelope" style="color:#818182;"></span>
-                                    EMAIL<br><span><?= $home['email'] ?></span> <?= $home['preferred_contact'] == 'email' ? ' (preferred)' : '' ?>
-                                </p>
-                                <?php
-                            }
-                        }
-                        ?>
-                    </div>
-                    <div class="profile-head col-sm-4 col-12">
-                        <?php
-                        if (isset($home['office_location']) && $home['office_location'] !== '') {
-                            ?>
-                            <p class="profile-rating mb-3 mt-2">
-                                <span class="fas fa-fw fa-building" style="color:#818182;"></span> OFFICE
-                                LOCATION<br><span><?= $home['office_location'] ?></span>
-                            </p>
+                    }
+                    ?>
+                    <div class="col-sm-8 col-12">
+                        <div class="row">
                             <?php
-                        }
-                        $office_hours = explode(',', $home["office_hours"]);
-                        if (count($office_hours) > 0) {
+                            if ($home['instructor_name'] && $home['instructor_name'] != ""){
                             ?>
-                            <p class="profile-rating mb-3 mt-2">
-                                <span class="fas fa-fw fa-clock" style="color:#818182;"></span> OFFICE HOURS<br/>
+                            <div class="col-12">
+                                <h4 class="font-weight-light">
+                                    <small class="font-weight-normal text-muted"><?= $home['prefix'] ?></small> <?= $home['instructor_name'] ?>
+                                </h4>
+                            </div>
+                            <?php
+                            }
+                            if ((isset($home['phone']) && $home['phone'] !== '') || (isset($home['email']) && $home['email'] !== '')) {
+                            ?>
+                            <div class="profile-head col-sm-6 col-12">
                                 <?php
-                                foreach ($office_hours as $hrs) {
-                                    echo '<span>' . $hrs . '</span><br />';
+                                    if (isset($home['phone']) && $home['phone'] !== '') {
+                                        ?>
+                                        <p class="profile-rating mb-3 mt-2">
+                                            <span class="fas fa-fw fa-phone" style="color:#818182;"></span>
+                                            PHONE<br><span><?= $home['phone'] ?></span> <?= $home['preferred_contact'] == 'phone' ? '<br><span style="color:#818182;">(preferred)</span>' : '' ?>
+                                            <br/>
+                                        </p>
+                                        <?php
+                                    }
+                                    if (isset($home['email']) && $home['email'] !== '') {
+                                        ?>
+                                        <p class="profile-rating mb-3 mt-2">
+                                            <span class="fas fa-fw fa-envelope" style="color:#818182;"></span>
+                                            EMAIL<br><span><?= $home['email'] ?></span> <?= $home['preferred_contact'] == 'email' ? '<br><span style="color:#818182;">(preferred)</span>' : '' ?>
+                                        </p>
+                                        <?php
+                                    }
+                                ?>
+                            </div>
+                            <?php
+                            }
+                            if ((isset($home['office_location']) && $home['office_location'] !== '') || ($office_hours && count($office_hours) > 0))
+                            {
+                            ?>
+                            <div class="profile-head col-sm-6 col-12">
+                                <?php
+                                if (isset($home['office_location']) && $home['office_location'] !== '') {
+                                    ?>
+                                    <p class="profile-rating mb-3 mt-2">
+                                        <span class="fas fa-fw fa-building" style="color:#818182;"></span> OFFICE
+                                        LOCATION<br><span><?= $home['office_location'] ?></span>
+                                    </p>
+                                    <?php
+                                }
+                                if (count($office_hours) > 0) {
+                                    ?>
+                                    <p class="profile-rating mb-3 mt-2">
+                                        <span class="fas fa-fw fa-clock" style="color:#818182;"></span> OFFICE HOURS<br/>
+                                        <?php
+                                        foreach ($office_hours as $hrs) {
+                                            echo '<span>' . $hrs . '</span><br />';
+                                        }
+                                        ?>
+                                    </p>
+                                    <?php
                                 }
                                 ?>
-                            </p>
+                            </div>
                             <?php
-                        }
-                        ?>
+                            }
+                            ?>
+                        </div>
                     </div>
                 </div>
             </div>
+            <?php
+            }
+            ?>
             <!-- Right column -->
             <div class="col-12">
                 <?php
