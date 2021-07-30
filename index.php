@@ -154,7 +154,7 @@ if ($USER->instructor) {
                         <?php
                         if (count($sections) > 0) {
                             ?>
-                            <div class="profile-rating" style="margin-top:0;">
+                            <div class="profile-rating pb-3" style="margin-top:0;">
                                 <span class="fas fa-fw fa-cube" style="color:#818182;"></span>
                                 SECTIONS
                                 <?php
@@ -177,7 +177,7 @@ if ($USER->instructor) {
                                 $formattedEndDate = $enddate->format("M. j");
                             }
                             ?>
-                            <div class="profile-rating mt-2" style="margin-top:0;">
+                            <div class="profile-rating pb-3" style="margin-top:0;">
                                 <span class="far fa-fw fa-calendar" style="color:#818182;"></span>
                                 DATES
                                 <div>
@@ -198,7 +198,7 @@ if ($USER->instructor) {
                         <?php
                         if (count($meetings) > 0) {
                             ?>
-                            <div class="profile-rating" style="margin-top:0;">
+                            <div class="profile-rating pb-3" style="margin-top:0;">
                                 <span class="far fa-fw fa-clock" style="color:#818182;"></span>
                                 CLASS TIMES
                                 <?php
@@ -211,7 +211,7 @@ if ($USER->instructor) {
                         }
                         if (isset($home["class_location"]) && $home["class_location"] != '') {
                             ?>
-                            <div class="profile-rating mt-2" style="margin-top:0;">
+                            <div class="profile-rating pb-3" style="margin-top:0;">
                                 <span class="far fa-fw fa-building" style="color:#818182;"></span>
                                 CLASS LOCATION
                                 <div><?= $home["class_location"] ?></div>
@@ -271,16 +271,15 @@ if ($USER->instructor) {
                                 <?php
                                     if (isset($home['phone']) && $home['phone'] !== '') {
                                         ?>
-                                        <div class="profile-rating mb-3 mt-2">
+                                        <div class="profile-rating pb-3 mt-0">
                                             <span class="fas fa-fw fa-phone" style="color:#818182;"></span>
                                             PHONE<div><?= $home['phone'] ?></div> <?= $home['preferred_contact'] == 'phone' ? '<div>(preferred)</div>' : '' ?>
-                                            <br/>
                                         </div>
                                         <?php
                                     }
                                     if (isset($home['email']) && $home['email'] !== '') {
                                         ?>
-                                        <div class="profile-rating mb-3 mt-2">
+                                        <div class="profile-rating pb-3 mt-0">
                                             <span class="fas fa-fw fa-envelope" style="color:#818182;"></span>
                                             EMAIL<div><?= $home['email'] ?></div> <?= $home['preferred_contact'] == 'email' ? '<div>(preferred)</div>' : '' ?>
                                         </div>
@@ -297,7 +296,7 @@ if ($USER->instructor) {
                                 <?php
                                 if (isset($home['office_location']) && $home['office_location'] !== '') {
                                     ?>
-                                    <div class="profile-rating mb-3 mt-2">
+                                    <div class="profile-rating pb-3 mt-0">
                                         <span class="fas fa-fw fa-building" style="color:#818182;"></span> OFFICE
                                         LOCATION<div><?= $home['office_location'] ?></div>
                                     </div>
@@ -305,7 +304,7 @@ if ($USER->instructor) {
                                 }
                                 if (count($office_hours) > 0) {
                                     ?>
-                                    <div class="profile-rating mb-3 mt-2">
+                                    <div class="profile-rating pb-3 mt-0">
                                         <span class="fas fa-fw fa-clock" style="color:#818182;"></span> OFFICE HOURS
                                         <?php
                                         foreach ($office_hours as $hrs) {
