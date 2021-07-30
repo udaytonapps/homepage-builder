@@ -66,8 +66,8 @@ $OUTPUT->header();
             position: relative;
             padding-bottom: 56.25%; /* 16:9 */
             height: 0;
-            margin-left: 3rem;
-            margin-right: 3rem;
+            margin-left: 4rem;
+            margin-right: 4rem;
         }
 
         .videoWrapper iframe {
