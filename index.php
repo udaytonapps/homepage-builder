@@ -36,13 +36,13 @@ $OUTPUT->header();
             color: #333;
         }
 
-        .profile-rating, .profile-rating2 {
+        .profile-rating {
             color: #818182;
             margin-top: 2em;
             overflow-wrap: break-word;
         }
 
-        .profile-rating span {
+        .profile-rating div {
             color: #495057;
             font-weight: 600;
             padding-left: 22px;
@@ -52,17 +52,10 @@ $OUTPUT->header();
             padding-left: 0;
         }
 
-        .profile-work {
-        }
-
         .profile-work p {
             color: #818182;
             font-weight: 600;
             margin-top: 2em;
-        }
-
-        .profile-work a {
-
         }
 
         .profile-work ul {
@@ -73,6 +66,8 @@ $OUTPUT->header();
             position: relative;
             padding-bottom: 56.25%; /* 16:9 */
             height: 0;
+            margin-left: 3rem;
+            margin-right: 3rem;
         }
 
         .videoWrapper iframe {
@@ -118,8 +113,8 @@ if ($USER->instructor) {
             if (($home["syllabus_blob_id"] && $home["syllabus_blob_id"] != "") || ($home["schedule_blob_id"] && $home["schedule_blob_id"] != "")) {
             ?>
             <div class="col-md-4 col-sm-5 col-12">
-                    <p class="profile-rating text-uppercase" style="margin-top:0;">
-                        <span class="far fa-fw fa-file-alt" aria-hidden="true" style="color: #818182;"></span> Course Documents</p>
+                    <div class="profile-rating text-uppercase" style="margin-top:0;">
+                        <span class="far fa-fw fa-file-alt" aria-hidden="true" style="color: #818182;"></span> Course Documents</div>
                     <div class="profile-work pb-2">
                         <?php
                         $syllabus_url = BlobUtil::getAccessUrlForBlob($home["syllabus_blob_id"], Output::getUtilUrl('/public_blob_serve.php'));
@@ -159,15 +154,15 @@ if ($USER->instructor) {
                         <?php
                         if (count($sections) > 0) {
                             ?>
-                            <p class="profile-rating" style="margin-top:0;">
-                                <span class="far fa-fw fa-cube" style="color:#818182;"></span>
-                                SECTIONS<br/>
+                            <div class="profile-rating" style="margin-top:0;">
+                                <span class="fas fa-fw fa-cube" style="color:#818182;"></span>
+                                SECTIONS
                                 <?php
                                 foreach ($sections as $section) {
-                                    echo '<span>' . $section . '</span><br />';
+                                    echo '<div>' . $section . '</div>';
                                 }
                                 ?>
-                            </p>
+                            </div>
                             <?php
                         }
                         if ((isset($home['start_date']) && $home["start_date"] != '') || (isset($home['end_date']) && $home["end_date"] != '')) {
@@ -182,15 +177,15 @@ if ($USER->instructor) {
                                 $formattedEndDate = $enddate->format("M. j");
                             }
                             ?>
-                            <p class="profile-rating" style="margin-top:0;">
+                            <div class="profile-rating mt-2" style="margin-top:0;">
                                 <span class="far fa-fw fa-calendar" style="color:#818182;"></span>
-                                DATES<br/>
-                                <span>
+                                DATES
+                                <div>
                             <?= $formattedStartDate ?>
                             <?= $formattedStartDate != '' && $formattedEndDate != '' ? ' - ' : '' ?>
                             <?= $formattedEndDate ?>
-                                </span>
-                            </p>
+                                </div>
+                            </div>
                             <?php
                         }
                         ?>
@@ -203,24 +198,24 @@ if ($USER->instructor) {
                         <?php
                         if (count($meetings) > 0) {
                             ?>
-                            <p class="profile-rating" style="margin-top:0;">
+                            <div class="profile-rating" style="margin-top:0;">
                                 <span class="far fa-fw fa-clock" style="color:#818182;"></span>
-                                CLASS TIMES<br/>
+                                CLASS TIMES
                                 <?php
                                 foreach ($meetings as $meeting) {
-                                    echo '<span>' . $meeting . '</span><br />';
+                                    echo '<div>' . $meeting . '</div>';
                                 }
                                 ?>
-                            </p>
+                            </div>
                             <?php
                         }
                         if (isset($home["class_location"]) && $home["class_location"] != '') {
                             ?>
-                            <p class="profile-rating" style="margin-top:0;">
+                            <div class="profile-rating mt-2" style="margin-top:0;">
                                 <span class="far fa-fw fa-building" style="color:#818182;"></span>
-                                CLASS LOCATION<br/>
-                                <span><?= $home["class_location"] ?></span>
-                            </p>
+                                CLASS LOCATION
+                                <div><?= $home["class_location"] ?></div>
+                            </div>
                             <?php
                         }
                         ?>
@@ -276,19 +271,19 @@ if ($USER->instructor) {
                                 <?php
                                     if (isset($home['phone']) && $home['phone'] !== '') {
                                         ?>
-                                        <p class="profile-rating mb-3 mt-2">
+                                        <div class="profile-rating mb-3 mt-2">
                                             <span class="fas fa-fw fa-phone" style="color:#818182;"></span>
-                                            PHONE<br><span><?= $home['phone'] ?></span> <?= $home['preferred_contact'] == 'phone' ? '<br><span style="color:#818182;">(preferred)</span>' : '' ?>
+                                            PHONE<div><?= $home['phone'] ?></div> <?= $home['preferred_contact'] == 'phone' ? '<div>(preferred)</div>' : '' ?>
                                             <br/>
-                                        </p>
+                                        </div>
                                         <?php
                                     }
                                     if (isset($home['email']) && $home['email'] !== '') {
                                         ?>
-                                        <p class="profile-rating mb-3 mt-2">
+                                        <div class="profile-rating mb-3 mt-2">
                                             <span class="fas fa-fw fa-envelope" style="color:#818182;"></span>
-                                            EMAIL<br><span><?= $home['email'] ?></span> <?= $home['preferred_contact'] == 'email' ? '<br><span style="color:#818182;">(preferred)</span>' : '' ?>
-                                        </p>
+                                            EMAIL<div><?= $home['email'] ?></div> <?= $home['preferred_contact'] == 'email' ? '<div>(preferred)</div>' : '' ?>
+                                        </div>
                                         <?php
                                     }
                                 ?>
@@ -302,22 +297,22 @@ if ($USER->instructor) {
                                 <?php
                                 if (isset($home['office_location']) && $home['office_location'] !== '') {
                                     ?>
-                                    <p class="profile-rating mb-3 mt-2">
+                                    <div class="profile-rating mb-3 mt-2">
                                         <span class="fas fa-fw fa-building" style="color:#818182;"></span> OFFICE
-                                        LOCATION<br><span><?= $home['office_location'] ?></span>
-                                    </p>
+                                        LOCATION<div><?= $home['office_location'] ?></div>
+                                    </div>
                                     <?php
                                 }
                                 if (count($office_hours) > 0) {
                                     ?>
-                                    <p class="profile-rating mb-3 mt-2">
-                                        <span class="fas fa-fw fa-clock" style="color:#818182;"></span> OFFICE HOURS<br/>
+                                    <div class="profile-rating mb-3 mt-2">
+                                        <span class="fas fa-fw fa-clock" style="color:#818182;"></span> OFFICE HOURS
                                         <?php
                                         foreach ($office_hours as $hrs) {
-                                            echo '<span>' . $hrs . '</span><br />';
+                                            echo '<div>' . $hrs . '</div>';
                                         }
                                         ?>
-                                    </p>
+                                    </div>
                                     <?php
                                 }
                                 ?>
