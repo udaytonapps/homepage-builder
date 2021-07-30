@@ -152,7 +152,7 @@ if ($USER->instructor) {
                     ?>
                     <div class="col-sm-6 col-12">
                         <?php
-                        if (count($sections) > 0) {
+                        if ($sections && count($sections) > 0) {
                             ?>
                             <div class="profile-rating pb-3" style="margin-top:0;">
                                 <span class="fas fa-fw fa-cube" style="color:#818182;"></span>
@@ -196,7 +196,7 @@ if ($USER->instructor) {
                     ?>
                     <div class="col-sm-6 col-12">
                         <?php
-                        if (count($meetings) > 0) {
+                        if ($meetings && count($meetings) > 0) {
                             ?>
                             <div class="profile-rating pb-3" style="margin-top:0;">
                                 <span class="far fa-fw fa-clock" style="color:#818182;"></span>
@@ -302,7 +302,7 @@ if ($USER->instructor) {
                                     </div>
                                     <?php
                                 }
-                                if (count($office_hours) > 0) {
+                                if ($office_hours && count($office_hours) > 0) {
                                     ?>
                                     <div class="profile-rating pb-3 mt-0">
                                         <span class="fas fa-fw fa-clock" style="color:#818182;"></span> OFFICE HOURS
