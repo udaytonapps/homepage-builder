@@ -108,7 +108,7 @@ if ($USER->instructor) {
         {
         ?>
         <div class="row"> <!-- Course details row -->
-            <div class="col-12"><h5>Course Details</h5></div>
+            <div class="col-12"><h5 class="mb-3">Course Details</h5></div>
             <?php
             if (($home["syllabus_blob_id"] && $home["syllabus_blob_id"] != "") || ($home["schedule_blob_id"] && $home["schedule_blob_id"] != "")) {
             ?>
@@ -239,7 +239,7 @@ if ($USER->instructor) {
         <div class="row"> <!-- Instructor info row -->
             <div class="col-12">
                 <hr>
-                <h5>Instructor Information</h5>
+                <h5 class="mb-2">Instructor Information</h5>
                 <div class="row">
                     <?php
                     if ($home["picture_blob_id"] && $home["picture_blob_id"] != "" && $profile_url) {
@@ -332,10 +332,10 @@ if ($USER->instructor) {
                 if (isset($home["course_desc"]) && $home["course_desc"] != '') {
                     ?>
                     <hr>
-                    <h5>Course Description</h5>
-                    <p>
+                    <h5 class="mb-3">Course Description</h5>
+                    <div>
                         <?= $home['course_desc'] ?>
-                    </p>
+                    </div>
                     <?php
                 }
                 if (isset($home['course_video']) && $home['course_video'] !== '') {
@@ -351,10 +351,10 @@ if ($USER->instructor) {
                 if (isset($home['getting_started']) && $home['getting_started'] !== '') {
                     ?>
                     <hr/>
-                    <h5>Getting Started</h5>
-                    <p>
+                    <h5 class="mb-3">Getting Started</h5>
+                    <div>
                         <?= $home['getting_started'] ?>
-                    </p>
+                    </div>
                     <?php
                 }
                 ?>
