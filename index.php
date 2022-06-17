@@ -44,7 +44,7 @@ $OUTPUT->header();
 
         .profile-work p {
             font-weight: 600;
-            margin-top: 2em;
+            margin-top: 1em;
         }
 
         .profile-work ul {
@@ -88,9 +88,13 @@ $OUTPUT->header();
             max-width: 100%;
         }
         .page-edit-button {
-            top:0;
-            right:0;
+            top:3px;
+            right:3px;
             position: absolute;
+        }
+        .download-btn {
+            font-weight: 400;
+            font-size: 1rem;
         }
     </style>
 <?php
@@ -130,8 +134,8 @@ if ($USER->instructor) {
                         $syllabus_url = BlobUtil::getAccessUrlForBlob($home["syllabus_blob_id"], Output::getUtilUrl('/public_blob_serve.php'));
                         if ($home["syllabus_blob_id"] && $home["syllabus_blob_id"] != "" && $syllabus_url) {
                             ?>
-                            <p class="mb-1 mt-2">
-                                <a class="btn btn-outline-primary btn-block"
+                            <p class="mb-1">
+                                <a class="download-btn btn btn-outline-primary btn-block"
                                    href="<?= addsession($syllabus_url) ?>"><span class="fa fa-download"
                                                                                  aria-hidden="true"></span> Download
                                     Syllabus</a>
@@ -141,8 +145,8 @@ if ($USER->instructor) {
                         $schedule_url = BlobUtil::getAccessUrlForBlob($home["schedule_blob_id"], Output::getUtilUrl('/public_blob_serve.php'));
                         if ($home["schedule_blob_id"] && $home["schedule_blob_id"] != "" && $schedule_url) {
                             ?>
-                            <p class="mb-1 mt-2">
-                                <a class="btn btn-outline-primary btn-block"
+                            <p class="mb-1">
+                                <a class="download-btn btn btn-outline-primary btn-block"
                                    href="<?= addSession($schedule_url) ?>"><span class="fa fa-download"
                                                                                  aria-hidden="true"></span> Download
                                     Schedule</a>
@@ -264,7 +268,7 @@ if ($USER->instructor) {
                     }
                     ?>
                     <div class="col-sm-8 col-12">
-                        <div class="row">
+                        <div>
                             <?php
                             if ($home['instructor_name'] && $home['instructor_name'] != ""){
                             ?>
