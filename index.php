@@ -21,29 +21,19 @@ if (!$home) {
 
 $OUTPUT->header();
 ?>
-    <!-- Bootstrap CSS -->
-    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" rel="stylesheet">
     <style>
-        body {
-        }
         .profile-img {
             padding: 1rem 2rem;
             text-align: center;
         }
 
-        .profile-head h5 {
-            color: #333;
-        }
-
         .profile-rating {
-            color: #818182;
+            color: var(--text-light);
             margin-top: 2em;
             overflow-wrap: break-word;
         }
 
         .profile-rating div {
-            color: #495057;
             font-weight: 600;
             padding-left: 22px;
         }
@@ -53,7 +43,6 @@ $OUTPUT->header();
         }
 
         .profile-work p {
-            color: #818182;
             font-weight: 600;
             margin-top: 2em;
         }
@@ -68,6 +57,7 @@ $OUTPUT->header();
             height: 0;
             margin-left: 4rem;
             margin-right: 4rem;
+            border: 2px solid var(--background-focus);
         }
 
         .videoWrapper iframe {
@@ -82,6 +72,26 @@ $OUTPUT->header();
             padding-left: 0;
             padding-right: 0;
         }
+
+        .page-banner {
+            width: 100%;
+            height: 80px;
+            padding: 0;
+            margin: 0;
+            background: var(--secondary);
+            color: var(--primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .inst-profile-image {
+            max-width: 100%;
+        }
+        .page-edit-button {
+            top:0;
+            right:0;
+            position: absolute;
+        }
     </style>
 <?php
 $OUTPUT->bodyStart();
@@ -89,13 +99,13 @@ $OUTPUT->bodyStart();
 $OUTPUT->flashMessages();
 if ($USER->instructor) {
     ?>
-    <div class="position-absolute" style="top:0;right:0;">
-        <a href="edit.php" class="btn btn-light"><span class="far fa-edit" aria-hidden="true"></span> Edit</a>
+    <div class="page-edit-button">
+        <a href="edit.php" class="btn btn-primary"><span class="far fa-edit" aria-hidden="true"></span> Edit</a>
     </div>
     <?php
 }
 ?>
-    <div style="width:100%;height:80px;padding:0;margin: 0;background:linear-gradient(40deg,#4c6dab,#002F87);">
+    <div class="page-banner">
         <h4 class="text-white inline-block p-2 pt-4 text-center">
             <?= $home['course_title'] ?>
         </h4>
@@ -114,7 +124,7 @@ if ($USER->instructor) {
             ?>
             <div class="col-md-4 col-sm-5 col-12">
                     <div class="profile-rating text-uppercase" style="margin-top:0;">
-                        <span class="far fa-fw fa-file-alt" aria-hidden="true" style="color: #818182;"></span> Course Documents</div>
+                        <span class="far fa-fw fa-file-alt" aria-hidden="true"></span> Course Documents</div>
                     <div class="profile-work pb-2">
                         <?php
                         $syllabus_url = BlobUtil::getAccessUrlForBlob($home["syllabus_blob_id"], Output::getUtilUrl('/public_blob_serve.php'));
@@ -155,7 +165,7 @@ if ($USER->instructor) {
                         if ($sections && count($sections) > 0) {
                             ?>
                             <div class="profile-rating pb-3" style="margin-top:0;">
-                                <span class="fas fa-fw fa-cube" style="color:#818182;"></span>
+                                <span class="fas fa-fw fa-cube" ></span>
                                 SECTIONS
                                 <?php
                                 foreach ($sections as $section) {
@@ -178,7 +188,7 @@ if ($USER->instructor) {
                             }
                             ?>
                             <div class="profile-rating pb-3" style="margin-top:0;">
-                                <span class="far fa-fw fa-calendar" style="color:#818182;"></span>
+                                <span class="far fa-fw fa-calendar" ></span>
                                 DATES
                                 <div>
                             <?= $formattedStartDate ?>
@@ -199,7 +209,7 @@ if ($USER->instructor) {
                         if ($meetings && count($meetings) > 0) {
                             ?>
                             <div class="profile-rating pb-3" style="margin-top:0;">
-                                <span class="far fa-fw fa-clock" style="color:#818182;"></span>
+                                <span class="far fa-fw fa-clock" ></span>
                                 CLASS TIMES
                                 <?php
                                 foreach ($meetings as $meeting) {
@@ -212,7 +222,7 @@ if ($USER->instructor) {
                         if (isset($home["class_location"]) && $home["class_location"] != '') {
                             ?>
                             <div class="profile-rating pb-3" style="margin-top:0;">
-                                <span class="far fa-fw fa-building" style="color:#818182;"></span>
+                                <span class="far fa-fw fa-building" ></span>
                                 CLASS LOCATION
                                 <div><?= $home["class_location"] ?></div>
                             </div>
@@ -246,7 +256,7 @@ if ($USER->instructor) {
                         ?>
                         <div class="col-sm-4 col-12">
                             <div class="profile-img">
-                                <img class="img-rounded img-fluid" alt="<?= $home['instructor_name'] ?>"
+                                <img class="inst-profile-image img-rounded img-fluid" alt="<?= $home['instructor_name'] ?>"
                                      src="<?= addsession($profile_url) ?>"/>
                             </div>
                         </div>
@@ -260,19 +270,19 @@ if ($USER->instructor) {
                             ?>
                             <div class="col-12">
                                 <h4 class="font-weight-light">
-                                    <small class="font-weight-normal text-muted"><?= $home['prefix'] ?></small> <?= $home['instructor_name'] ?>
+                                    <small class="font-weight-normal"><?= $home['prefix'] ?> </small> <?= $home['instructor_name'] ?>
                                 </h4>
                             </div>
                             <?php
                             }
                             if ((isset($home['phone']) && $home['phone'] !== '') || (isset($home['email']) && $home['email'] !== '')) {
                             ?>
-                            <div class="profile-head col-sm-6 col-12">
+                            <div class="col-sm-6 col-12">
                                 <?php
                                     if (isset($home['phone']) && $home['phone'] !== '') {
                                         ?>
                                         <div class="profile-rating pb-3 mt-0">
-                                            <span class="fas fa-fw fa-phone" style="color:#818182;"></span>
+                                            <span class="fas fa-fw fa-phone" ></span>
                                             PHONE<div><?= $home['phone'] ?></div> <?= $home['preferred_contact'] == 'phone' ? '<div>(preferred)</div>' : '' ?>
                                         </div>
                                         <?php
@@ -280,7 +290,7 @@ if ($USER->instructor) {
                                     if (isset($home['email']) && $home['email'] !== '') {
                                         ?>
                                         <div class="profile-rating pb-3 mt-0">
-                                            <span class="fas fa-fw fa-envelope" style="color:#818182;"></span>
+                                            <span class="fas fa-fw fa-envelope" ></span>
                                             EMAIL<div><?= $home['email'] ?></div> <?= $home['preferred_contact'] == 'email' ? '<div>(preferred)</div>' : '' ?>
                                         </div>
                                         <?php
@@ -292,12 +302,12 @@ if ($USER->instructor) {
                             if ((isset($home['office_location']) && $home['office_location'] !== '') || ($office_hours && count($office_hours) > 0))
                             {
                             ?>
-                            <div class="profile-head col-sm-6 col-12">
+                            <div class="col-sm-6 col-12">
                                 <?php
                                 if (isset($home['office_location']) && $home['office_location'] !== '') {
                                     ?>
                                     <div class="profile-rating pb-3 mt-0">
-                                        <span class="fas fa-fw fa-building" style="color:#818182;"></span> OFFICE
+                                        <span class="fas fa-fw fa-building" ></span> OFFICE
                                         LOCATION<div><?= $home['office_location'] ?></div>
                                     </div>
                                     <?php
@@ -305,7 +315,7 @@ if ($USER->instructor) {
                                 if ($office_hours && count($office_hours) > 0) {
                                     ?>
                                     <div class="profile-rating pb-3 mt-0">
-                                        <span class="fas fa-fw fa-clock" style="color:#818182;"></span> OFFICE HOURS
+                                        <span class="fas fa-fw fa-clock" ></span> OFFICE HOURS
                                         <?php
                                         foreach ($office_hours as $hrs) {
                                             echo '<div>' . $hrs . '</div>';
