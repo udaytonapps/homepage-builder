@@ -304,11 +304,7 @@ $OUTPUT->header();
         .course-description .ck-editor__editable_inline {
             min-height: 140px;
         }
-        body {
-            background: #eee;
-        }
         .tab-content {
-            background: #fff;
             padding: 1rem;
             border: 1px solid #ddd;
             border-top: none;
@@ -316,9 +312,6 @@ $OUTPUT->header();
         .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
             color: #333;
             opacity: 1;
-        }
-        .nav-tabs > li:not(.active) {
-            background: #efefef;
         }
 
         .ck-editor__editable_inline {
@@ -333,8 +326,8 @@ echo '<div class="container-fluid">';
 $OUTPUT->flashMessages();
 ?>
     <div class="pull-right" style="padding-top:1rem;">
-        <a href="#importModal" class="btn btn-link" data-toggle="modal"><span class="fas fa-file-import" aria-hidden="true"></span> Import
-            from Previous Site</a>
+        <a href="#importModal" class="btn btn-link" data-toggle="modal"><span class="fas fa-file-import" aria-hidden="true"></span>
+        Import from Previous Site</a>
     </div>
     <h3>Edit Homepage Information</h3>
     <p>Use the form below to add information to your homepage. The information has been divided into four
@@ -503,7 +496,7 @@ $OUTPUT->flashMessages();
         <hr>
         <h5>All finished? Click "Save" to save your changes on all tabs and return to the main page.</h5>
         <button type="submit" name="save" class="btn btn-primary">Save</button>
-        <a href="<?= addSession("index.php") ?>" class="btn btn-link">Cancel</a>
+        <a href="<?= addSession("index.php") ?>" class="btn btn-warning">Cancel</a>
     </form>
 <?php
 echo '</div>'; // End container
