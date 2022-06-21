@@ -28,7 +28,6 @@ $OUTPUT->header();
         }
 
         .profile-rating {
-            color: var(--text-light);
             margin-top: 2em;
             overflow-wrap: break-word;
         }
@@ -78,8 +77,8 @@ $OUTPUT->header();
             height: 80px;
             padding: 0;
             margin: 0;
-            background: var(--secondary);
-            color: var(--primary);
+            background: var(--primary);
+            color: white;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -88,9 +87,13 @@ $OUTPUT->header();
             max-width: 100%;
         }
         .page-edit-button {
-            top:3px;
-            right:3px;
+            top: 5px;
+            right: 5px;
             position: absolute;
+        }
+        .edit-btn {
+            background-color: white;
+            color: black;
         }
         .download-btn, .download-btn:hover {
             font-weight: 400;
@@ -104,7 +107,7 @@ $OUTPUT->flashMessages();
 if ($USER->instructor) {
     ?>
     <div class="page-edit-button">
-        <a href="edit.php" class="btn btn-primary"><span class="far fa-edit" aria-hidden="true"></span> Edit</a>
+        <a href="edit.php" class="btn edit-btn"><span class="far fa-edit" aria-hidden="true"></span> Edit</a>
     </div>
     <?php
 }
@@ -135,7 +138,7 @@ if ($USER->instructor) {
                         if ($home["syllabus_blob_id"] && $home["syllabus_blob_id"] != "" && $syllabus_url) {
                             ?>
                             <p class="mb-1">
-                                <a class="download-btn btn btn-outline-primary btn-block"
+                                <a class="download-btn btn btn-outline-background btn-block"
                                    href="<?= addsession($syllabus_url) ?>"><span class="fa fa-download"
                                                                                  aria-hidden="true"></span> Download
                                     Syllabus</a>
@@ -146,7 +149,7 @@ if ($USER->instructor) {
                         if ($home["schedule_blob_id"] && $home["schedule_blob_id"] != "" && $schedule_url) {
                             ?>
                             <p class="mb-1">
-                                <a class="download-btn btn btn-outline-primary btn-block"
+                                <a class="download-btn btn btn-outline-background btn-block"
                                    href="<?= addSession($schedule_url) ?>"><span class="fa fa-download"
                                                                                  aria-hidden="true"></span> Download
                                     Schedule</a>
