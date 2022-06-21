@@ -92,7 +92,7 @@ $OUTPUT->header();
             right:3px;
             position: absolute;
         }
-        .download-btn {
+        .download-btn, .download-btn:hover {
             font-weight: 400;
             font-size: 1rem;
         }
@@ -250,7 +250,7 @@ if ($USER->instructor) {
         (isset($home['office_location']) && $home['office_location'] !== '') || ($office_hours && count($office_hours) > 0))
         {
         ?>
-        <div class="row"> <!-- Instructor info row -->
+        <div> <!-- Instructor info row -->
             <div class="col-12">
                 <hr>
                 <h5 class="mb-2">Instructor Information</h5>
