@@ -324,9 +324,6 @@ $OUTPUT->header();
             color: white;
             opacity: .7;
         }
-        .btn-link:focus {
-            /* color: var(--text); */
-        }
     </style>
 <?php
 $OUTPUT->bodyStart();
