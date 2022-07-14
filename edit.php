@@ -317,6 +317,13 @@ $OUTPUT->header();
         .ck-editor__editable_inline {
             min-height: 200px;
         }
+        .modal-header, .modal-body, .modal-footer {
+            background-color: var(--background-focus);
+        }
+        .modal-header .close {
+            color: white;
+            opacity: .7;
+        }
     </style>
 <?php
 $OUTPUT->bodyStart();
