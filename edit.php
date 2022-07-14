@@ -325,7 +325,7 @@ $OUTPUT->header();
             opacity: .7;
         }
         .btn-link:focus {
-            color: var(--text);
+            /* color: var(--text); */
         }
     </style>
 <?php
@@ -506,7 +506,7 @@ $OUTPUT->flashMessages();
         <hr>
         <h5>All finished? Click "Save" to save your changes on all tabs and return to the main page.</h5>
         <button type="submit" name="save" class="btn btn-primary">Save</button>
-        <a href="<?= addSession("index.php") ?>" class="btn btn-warning">Cancel</a>
+        <a href="<?= addSession("index.php") ?>" class="btn btn-default">Cancel</a>
     </form>
 <?php
 echo '</div>'; // End container
