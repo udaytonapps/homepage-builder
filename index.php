@@ -261,7 +261,7 @@ if ($USER->instructor) {
                     <?php
                     if ($home["picture_blob_id"] && $home["picture_blob_id"] != "" && $profile_url) {
                         ?>
-                        <div class="col-sm-4 col-12">
+                        <div class="col-sm-4 col-xs-5">
                             <div class="profile-img">
                                 <img class="inst-profile-image img-rounded img-fluid" alt="<?= $home['instructor_name'] ?>"
                                      src="<?= addsession($profile_url) ?>"/>
@@ -270,7 +270,7 @@ if ($USER->instructor) {
                         <?php
                     }
                     ?>
-                    <div class="col-sm-8 col-12">
+                    <div class="col-sm-8 col-xs-7">
                         <div>
                             <?php
                             if ($home['instructor_name'] && $home['instructor_name'] != ""){
