@@ -13,13 +13,16 @@ if ( $USER->instructor && isset($_POST["importSite"]) && is_numeric($_POST["impo
     $homeStmt = $PDOX->prepare("SELECT * FROM {$p}course_home WHERE home_id = :home_id");
     $homeStmt->execute(array(":home_id" => $homeId));
     $home = $homeStmt->fetch(PDO::FETCH_ASSOC);
-
+    
     if ($home) {
         $currentHomeStmt = $PDOX->prepare("SELECT * FROM {$p}course_home WHERE link_id = :link_id");
         $currentHomeStmt->execute(array(":link_id" => $LINK->id));
         $currentHome = $currentHomeStmt->fetch(PDO::FETCH_ASSOC);
-
+        $isImportingFiles = isset($_POST["isImportingFiles"]) ? true : false;
+        
         if ($currentHome) {
+            // Condition will be empty string if file import option wasn't selected
+            $importCondition = $isImportingFiles ? 'syllabus_blob_id = :syllabus_blob_id, schedule_blob_id = :schedule_blob_id,' : "";
             // Update it
             $updateHomeStmt = $PDOX->prepare("UPDATE {$p}course_home set 
                                         sections = :sections,
@@ -38,9 +41,11 @@ if ( $USER->instructor && isset($_POST["importSite"]) && is_numeric($_POST["impo
                                         preferred_contact = :preferred_contact,
                                         office_hours = :office_hours,
                                         getting_started = :getting_started,
-                                        about_me = :about_me
+                                        about_me = :about_me,
+                                        {$importCondition}
+                                        picture_blob_id = :picture_blob_id
                                         where home_id = :home_id");
-            $updateHomeStmt->execute(array(
+            $arr = array(
                 ":sections" => $home["sections"],
                 ":meetings" => $home["meetings"],
                 ":class_location" => $home["class_location"],
@@ -58,9 +63,18 @@ if ( $USER->instructor && isset($_POST["importSite"]) && is_numeric($_POST["impo
                 ":office_hours" => $home["office_hours"],
                 ":getting_started" => $home["getting_started"],
                 ":about_me" => $home["about_me"],
-                ":home_id" => $currentHome["home_id"]
-            ));
+                ":picture_blob_id" => $home["picture_blob_id"],
+                ":home_id" => $currentHome["home_id"]);
+            if ($isImportingFiles) {
+                // Combine the file upload elements only if file import option was selected
+                $arr = array_merge($arr, array(":syllabus_blob_id" => $home["syllabus_blob_id"], ":schedule_blob_id" => $home["schedule_blob_id"]));
+            }
+            $updateHomeStmt->execute($arr);
         } else {
+            // Conditions will be empty strings if file import option wasn't selected
+            $insertFileCols = $isImportingFiles ? 'syllabus_blob_id, schedule_blob_id,' : "";
+            $insertFileVals = $isImportingFiles ? ':syllabus_blob_id, :schedule_blob_id,' : "";
+            
             // New record
             $newHomeStmt = $PDOX->prepare("INSERT INTO {$p}course_home (
                 link_id, 
@@ -82,7 +96,9 @@ if ( $USER->instructor && isset($_POST["importSite"]) && is_numeric($_POST["impo
                 preferred_contact, 
                 office_hours, 
                 getting_started, 
-                about_me
+                about_me,
+                {$insertFileCols}
+                picture_blob_id
             )
             values (
              :link_id, 
@@ -103,10 +119,12 @@ if ( $USER->instructor && isset($_POST["importSite"]) && is_numeric($_POST["impo
              :email, 
              :preferred_contact, 
              :office_hours, 
-             :getting_started, 
-             :about_me
+             :getting_started,
+             :about_me,
+             {$insertFileVals}
+             :picture_blob_id
             )");
-            $newHomeStmt->execute(array(
+            $arr = array(
                 ":link_id" => $LINK->id,
                 ":context_id" => $CONTEXT->id,
                 ":user_id" => $USER->id,
@@ -126,8 +144,14 @@ if ( $USER->instructor && isset($_POST["importSite"]) && is_numeric($_POST["impo
                 ":preferred_contact" => $home["preferred_contact"],
                 ":office_hours" => $home["office_hours"],
                 ":getting_started" => $home["getting_started"],
-                ":about_me" => $home["about_me"]
-            ));
+                ":about_me" => $home["about_me"],
+                ":picture_blob_id" => $home["picture_blob_id"]
+            );
+            if ($isImportingFiles) {
+                // Combine the file upload elements only if file import option was selected
+                $arr = array_merge($arr, array(":syllabus_blob_id" => $home["syllabus_blob_id"], ":schedule_blob_id" => $home["schedule_blob_id"]));
+            }
+            $newHomeStmt->execute($arr);
         }
 
         $_SESSION["success"] = "Import successful. Please click on Edit to update your homepage for the current term as well as re-upload your syllabus, schedule, and profile picture files.";
