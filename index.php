@@ -247,6 +247,7 @@ if ($USER->instructor) {
         }
         $profile_url = BlobUtil::getAccessUrlForBlob($home["picture_blob_id"], Output::getUtilUrl('/public_blob_serve.php'));
         $office_hours = $home["office_hours"] ? explode(',', $home["office_hours"]) : false;
+        $addtl_contacts = $home["addtl_contacts"] ? explode(',', $home["addtl_contacts"]) : false;
         if (($home["picture_blob_id"] && $home["picture_blob_id"] != "" && $profile_url) ||
         ($home['instructor_name'] && $home['instructor_name'] != "") ||
         (isset($home['phone']) && $home['phone'] !== '') || (isset($home['email']) && $home['email'] !== '') ||
@@ -333,6 +334,20 @@ if ($USER->instructor) {
                                 }
                                 ?>
                             </div>
+                            <?php
+                            }
+                            if ($addtl_contacts && count($addtl_contacts) > 0) {
+                            ?>
+                                <div class="col-sm-6 col-12">
+                                    <div class="profile-rating pb-3 mt-0">
+                                        <span class="fas fa-fw fa-users" ></span> Additional Contacts
+                                        <?php
+                                        foreach ($addtl_contacts as $contact) {
+                                            echo '<div>' . $contact . '</div>';
+                                        }
+                                        ?>
+                                    </div>
+                                </div>
                             <?php
                             }
                             ?>

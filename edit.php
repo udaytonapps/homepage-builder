@@ -12,6 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && count($_POST) == 0) {
     die('Error: Maximum size of ' . BlobUtil::maxUpload() . 'MB exceeded.');
 }
 
+// Flag sent from the build-choice page to determine whether user chose to import
+$isImporting = isset($_REQUEST['action']) && $_REQUEST['action'] === 'import';
+
 $LAUNCH = LTIX::requireData();
 
 $homeStmt = $PDOX->prepare("SELECT * FROM {$p}course_home WHERE link_id = :linkId");
@@ -34,6 +37,7 @@ if ($home) {
     $email = $home["email"];
     $preferred_contact = $home["preferred_contact"];
     $office_hours = $home["office_hours"];
+    $addtl_contacts = $home["addtl_contacts"];
     $getting_started = $home["getting_started"];
     $about_me = $home["about_me"];
     $_SESSION['syllabus'] = isset($home["syllabus_blob_id"]) && $home["syllabus_blob_id"] != null ? BlobUtil::getAccessUrlForBlob($home["syllabus_blob_id"]) : false;
@@ -55,6 +59,7 @@ if ($home) {
     $email = $USER->email;
     $preferred_contact = '';
     $office_hours = '';
+    $addtl_contacts = '';
     $getting_started = '';
     $about_me = '';
     $_SESSION['syllabus'] = false;
@@ -202,13 +207,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
     $email = isset($_POST["email"]) ? $_POST["email"] : "";
     $preferred = isset($_POST["preferred"]) ? $_POST["preferred"] : "";
     $hours = isset($_POST["office_hours"]) ? $_POST["office_hours"] : "";
+    $contacts = isset($_POST["addtl_contacts"]) ? $_POST["addtl_contacts"] : "";
 
     $getStarted = isset($_POST["getting_started"]) ? $_POST["getting_started"] : "";
     $aboutMe = isset($_POST["about_me"]) ? $_POST["about_me"] : "";
 
     if (!$home) {
         // Homepage was never created so insert
-        $insertStmt = $PDOX->prepare("INSERT INTO {$p}course_home (link_id, context_id, user_id, sections, meetings, class_location, start_date, end_date, course_title, course_desc, course_video, syllabus_blob_id, schedule_blob_id, picture_blob_id, prefix, instructor_name, office_location, phone, email, preferred_contact, office_hours, getting_started, about_me) values (:link_id, :context_id, :user_id, :sections, :meetings, :class_location, :start_date, :end_date, :course_title, :course_desc, :course_video, :syllabus_blob_id, :schedule_blob_id, :picture_blob_id, :prefix, :instructor_name, :office_location, :phone, :email, :preferred_contact, :office_hours, :getting_started, :about_me)");
+        $insertStmt = $PDOX->prepare("INSERT INTO {$p}course_home (link_id, context_id, user_id, sections, meetings, class_location, start_date, end_date, course_title, course_desc, course_video, syllabus_blob_id, schedule_blob_id, picture_blob_id, prefix, instructor_name, office_location, phone, email, preferred_contact, office_hours, addtl_contacts, getting_started, about_me) values (:link_id, :context_id, :user_id, :sections, :meetings, :class_location, :start_date, :end_date, :course_title, :course_desc, :course_video, :syllabus_blob_id, :schedule_blob_id, :picture_blob_id, :prefix, :instructor_name, :office_location, :phone, :email, :preferred_contact, :office_hours, :addtl_contacts, :getting_started, :about_me)");
         $insertStmt->execute(array(
             ":link_id" => $LINK->id,
             ":context_id" => $CONTEXT->id,
@@ -231,6 +237,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
             ":email" => $email,
             ":preferred_contact" => $preferred,
             ":office_hours" => $hours,
+            ":addtl_contacts" => $contacts,
             ":getting_started" => $getStarted,
             ":about_me" => $aboutMe
         ));
@@ -265,6 +272,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
                                         email = :email,
                                         preferred_contact = :preferred_contact,
                                         office_hours = :office_hours,
+                                        addtl_contacts = :addtl_contacts,
                                         getting_started = :getting_started,
                                         about_me = :about_me
                                         WHERE link_id = :link_id");
@@ -287,6 +295,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
             ":email" => $email,
             ":preferred_contact" => $preferred,
             ":office_hours" => $hours,
+            ":addtl_contacts" => $contacts,
             ":getting_started" => $getStarted,
             ":about_me" => $aboutMe,
             ":link_id" => $LINK->id
@@ -324,6 +333,9 @@ $OUTPUT->header();
             color: white;
             opacity: .7;
         }
+        #import-link:focus {
+            color: var(--text-light);
+        }
     </style>
 <?php
 $OUTPUT->bodyStart();
@@ -333,7 +345,7 @@ echo '<div class="container-fluid">';
 $OUTPUT->flashMessages();
 ?>
     <div class="pull-right" style="padding-top:1rem;">
-        <a href="#importModal" class="btn btn-link" data-toggle="modal"><span class="fas fa-file-import" aria-hidden="true"></span>
+        <a href="#importModal" id="import-link" class="btn btn-link" data-toggle="modal"><span class="fas fa-file-import" aria-hidden="true"></span>
         Import from Previous Site</a>
     </div>
     <h3>Edit Homepage Information</h3>
@@ -471,6 +483,12 @@ $OUTPUT->flashMessages();
                     <input type="text" class="form-control" id="office_hours" name="office_hours"
                            value="<?= $office_hours ?>" placeholder="e.g. MWF 2:00p - 3:15p, Tues. 10:00a - 11:00a">
                 </div>
+                <div class="form-group">
+                    <label for="addtl_contacts">Additional Contacts<br/><small>Use a comma to
+                            separate additional contacts to separate lines</small></label>
+                    <input type="text" class="form-control" id="addtl_contacts" name="addtl_contacts"
+                           value="<?= $addtl_contacts ?>" placeholder="e.g. (SI Leader) Rudy Flyer -- email@udayton.edu, (Tutor) Jane Doe -- email@udayton.edu">
+                </div>
                 <hr>
                 <a id="instructor-next" class="btn btn-link" data-toggle="tab" href="javascript:void(0);">Next Section <span class="fa fa-arrow-right" aria-hidden="true"></span></a>
             </div>
@@ -521,9 +539,8 @@ $allHomes = $allHomesStmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
                 <form action="import.php" method="post">
                     <div class="modal-body">
-                        <p class="alert alert-warning">Please note that any syllabus, schedule, and profile picture
-                            files from the previous site will not be imported and will need to be re-uploaded to this
-                            site.</>
+                        <p class="alert alert-warning">Please note that he profile picture from the previous site <strong>will</strong> be imported, but the syllabus and/or schedule 
+                            files will not be imported unless the option to do so is selected.</>
                         <?php
                         if ($allHomes) {
                             echo '<div class="form-group"><label for="importSite">Select Homepage to Import</label><select class="form-control" id="importSite" name="importSite">';
@@ -539,6 +556,12 @@ $allHomes = $allHomesStmt->fetchAll(PDO::FETCH_ASSOC);
                                 echo '<option value="' . $prevHome["home_id"] . '">' . $title . '</option>';
                             }
                             echo '</select></div>';
+                            ?>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="isImportingFiles" name="isImportingFiles" value="true">
+                                    <label for="isImportingFiles" class="form-check-label">Import the syllabus and schedule files as part of this process.</label>
+                                </div>
+                            <?php
                         } else {
                             echo '<p><em>You do not have any previously completed homepages to import from.</em></p>';
                         }
@@ -571,6 +594,13 @@ $OUTPUT->footerStart();
             $("#desc-next").on("click", function() {
                 $("#started-tab-link").click();
             });
+            <?php
+            if ($isImporting) {
+                ?>
+                $("#import-link").click();
+                <?php
+            }
+            ?>
 
             $("#start").datepicker();
             $("#end").datepicker();
