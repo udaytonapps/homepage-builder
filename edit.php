@@ -37,6 +37,7 @@ if ($home) {
     $email = $home["email"];
     $preferred_contact = $home["preferred_contact"];
     $office_hours = $home["office_hours"];
+    $addtl_contacts = $home["addtl_contacts"];
     $getting_started = $home["getting_started"];
     $about_me = $home["about_me"];
     $_SESSION['syllabus'] = isset($home["syllabus_blob_id"]) && $home["syllabus_blob_id"] != null ? BlobUtil::getAccessUrlForBlob($home["syllabus_blob_id"]) : false;
@@ -58,6 +59,7 @@ if ($home) {
     $email = $USER->email;
     $preferred_contact = '';
     $office_hours = '';
+    $addtl_contacts = '';
     $getting_started = '';
     $about_me = '';
     $_SESSION['syllabus'] = false;
@@ -205,13 +207,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
     $email = isset($_POST["email"]) ? $_POST["email"] : "";
     $preferred = isset($_POST["preferred"]) ? $_POST["preferred"] : "";
     $hours = isset($_POST["office_hours"]) ? $_POST["office_hours"] : "";
+    $contacts = isset($_POST["addtl_contacts"]) ? $_POST["addtl_contacts"] : "";
 
     $getStarted = isset($_POST["getting_started"]) ? $_POST["getting_started"] : "";
     $aboutMe = isset($_POST["about_me"]) ? $_POST["about_me"] : "";
 
     if (!$home) {
         // Homepage was never created so insert
-        $insertStmt = $PDOX->prepare("INSERT INTO {$p}course_home (link_id, context_id, user_id, sections, meetings, class_location, start_date, end_date, course_title, course_desc, course_video, syllabus_blob_id, schedule_blob_id, picture_blob_id, prefix, instructor_name, office_location, phone, email, preferred_contact, office_hours, getting_started, about_me) values (:link_id, :context_id, :user_id, :sections, :meetings, :class_location, :start_date, :end_date, :course_title, :course_desc, :course_video, :syllabus_blob_id, :schedule_blob_id, :picture_blob_id, :prefix, :instructor_name, :office_location, :phone, :email, :preferred_contact, :office_hours, :getting_started, :about_me)");
+        $insertStmt = $PDOX->prepare("INSERT INTO {$p}course_home (link_id, context_id, user_id, sections, meetings, class_location, start_date, end_date, course_title, course_desc, course_video, syllabus_blob_id, schedule_blob_id, picture_blob_id, prefix, instructor_name, office_location, phone, email, preferred_contact, office_hours, addtl_contacts, getting_started, about_me) values (:link_id, :context_id, :user_id, :sections, :meetings, :class_location, :start_date, :end_date, :course_title, :course_desc, :course_video, :syllabus_blob_id, :schedule_blob_id, :picture_blob_id, :prefix, :instructor_name, :office_location, :phone, :email, :preferred_contact, :office_hours, :addtl_contacts, :getting_started, :about_me)");
         $insertStmt->execute(array(
             ":link_id" => $LINK->id,
             ":context_id" => $CONTEXT->id,
@@ -234,6 +237,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
             ":email" => $email,
             ":preferred_contact" => $preferred,
             ":office_hours" => $hours,
+            ":addtl_contacts" => $contacts,
             ":getting_started" => $getStarted,
             ":about_me" => $aboutMe
         ));
@@ -268,6 +272,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
                                         email = :email,
                                         preferred_contact = :preferred_contact,
                                         office_hours = :office_hours,
+                                        addtl_contacts = :addtl_contacts,
                                         getting_started = :getting_started,
                                         about_me = :about_me
                                         WHERE link_id = :link_id");
@@ -290,6 +295,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
             ":email" => $email,
             ":preferred_contact" => $preferred,
             ":office_hours" => $hours,
+            ":addtl_contacts" => $contacts,
             ":getting_started" => $getStarted,
             ":about_me" => $aboutMe,
             ":link_id" => $LINK->id
@@ -476,6 +482,12 @@ $OUTPUT->flashMessages();
                             separate office hours to separate lines</small></label>
                     <input type="text" class="form-control" id="office_hours" name="office_hours"
                            value="<?= $office_hours ?>" placeholder="e.g. MWF 2:00p - 3:15p, Tues. 10:00a - 11:00a">
+                </div>
+                <div class="form-group">
+                    <label for="addtl_contacts">Additional Contacts<br/><small>Use a comma to
+                            separate additional contacts to separate lines</small></label>
+                    <input type="text" class="form-control" id="addtl_contacts" name="addtl_contacts"
+                           value="<?= $addtl_contacts ?>" placeholder="e.g. (SI Leader) Rudy Flyer -- email@udayton.edu, (Tutor) Jane Doe -- email@udayton.edu">
                 </div>
                 <hr>
                 <a id="instructor-next" class="btn btn-link" data-toggle="tab" href="javascript:void(0);">Next Section <span class="fa fa-arrow-right" aria-hidden="true"></span></a>

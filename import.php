@@ -40,6 +40,7 @@ if ( $USER->instructor && isset($_POST["importSite"]) && is_numeric($_POST["impo
                                         email = :email,
                                         preferred_contact = :preferred_contact,
                                         office_hours = :office_hours,
+                                        addtl_contacts = :addtl_contacts,
                                         getting_started = :getting_started,
                                         about_me = :about_me,
                                         {$importCondition}
@@ -61,6 +62,7 @@ if ( $USER->instructor && isset($_POST["importSite"]) && is_numeric($_POST["impo
                 ":email" => $home["email"],
                 ":preferred_contact" => $home["preferred_contact"],
                 ":office_hours" => $home["office_hours"],
+                ":addtl_contacts" => $home["addtl_contacts"],
                 ":getting_started" => $home["getting_started"],
                 ":about_me" => $home["about_me"],
                 ":picture_blob_id" => $home["picture_blob_id"],
@@ -95,6 +97,7 @@ if ( $USER->instructor && isset($_POST["importSite"]) && is_numeric($_POST["impo
                 email, 
                 preferred_contact, 
                 office_hours, 
+                addtl_contacts,
                 getting_started, 
                 about_me,
                 {$insertFileCols}
@@ -119,6 +122,7 @@ if ( $USER->instructor && isset($_POST["importSite"]) && is_numeric($_POST["impo
              :email, 
              :preferred_contact, 
              :office_hours, 
+             :addtl_contacts,
              :getting_started,
              :about_me,
              {$insertFileVals}
@@ -143,6 +147,7 @@ if ( $USER->instructor && isset($_POST["importSite"]) && is_numeric($_POST["impo
                 ":email" => $home["email"],
                 ":preferred_contact" => $home["preferred_contact"],
                 ":office_hours" => $home["office_hours"],
+                ":addtl_contacts" => $home["addtl_contacts"],
                 ":getting_started" => $home["getting_started"],
                 ":about_me" => $home["about_me"],
                 ":picture_blob_id" => $home["picture_blob_id"]

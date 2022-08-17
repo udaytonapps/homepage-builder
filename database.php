@@ -31,6 +31,7 @@ $DATABASE_INSTALL = array(
     email               VARCHAR(255) NULL,
     preferred_contact   VARCHAR(10) NULL,
     office_hours        VARCHAR(255) NULL,
+    addtl_contacts      VARCHAR(255) NULL,
     getting_started     TEXT NULL,
     about_me            TEXT NULL,
     
@@ -38,3 +39,15 @@ $DATABASE_INSTALL = array(
     PRIMARY KEY(home_id)
 ) ENGINE = InnoDB DEFAULT CHARSET=utf8")
 );
+
+$DATABASE_UPGRADE = function ($oldversion) {
+    global $CFG, $PDOX;
+    // Add addtl_contacts column
+    if (!$PDOX->columnExists('addtl_contacts', "{$CFG->dbprefix}course_home")) {
+        $sql = "ALTER TABLE {$CFG->dbprefix}course_home ADD addtl_contacts VARCHAR(255)";
+        echo ("Upgrading: " . $sql . "<br/>\n");
+        error_log("Upgrading: " . $sql);
+        $q = $PDOX->queryDie($sql);
+    }
+    return '202208171424';
+};
