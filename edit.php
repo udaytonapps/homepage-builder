@@ -546,8 +546,8 @@ $allHomes = $allHomesStmt->fetchAll(PDO::FETCH_ASSOC);
                             echo '</select></div>';
                             ?>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="check1" name="isImportingFiles" value="true">
-                                    <label class="form-check-label">Import the syllabus and schedule files as part of this process.</label>
+                                    <input class="form-check-input" type="checkbox" id="isImportingFiles" name="isImportingFiles" value="true">
+                                    <label for="isImportingFiles" class="form-check-label">Import the syllabus and schedule files as part of this process.</label>
                                 </div>
                             <?php
                         } else {
