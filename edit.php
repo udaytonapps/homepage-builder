@@ -12,6 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && count($_POST) == 0) {
     die('Error: Maximum size of ' . BlobUtil::maxUpload() . 'MB exceeded.');
 }
 
+// Flag sent from the build-choice page to determine whether user chose to import
+$isImporting = isset($_REQUEST['action']) && $_REQUEST['action'] === 'import';
+
 $LAUNCH = LTIX::requireData();
 
 $homeStmt = $PDOX->prepare("SELECT * FROM {$p}course_home WHERE link_id = :linkId");
@@ -579,6 +582,13 @@ $OUTPUT->footerStart();
             $("#desc-next").on("click", function() {
                 $("#started-tab-link").click();
             });
+            <?php
+            if ($isImporting) {
+                ?>
+                $("#import-link").click();
+                <?php
+            }
+            ?>
 
             $("#start").datepicker();
             $("#end").datepicker();
