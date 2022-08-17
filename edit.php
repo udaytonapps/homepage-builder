@@ -324,6 +324,9 @@ $OUTPUT->header();
             color: white;
             opacity: .7;
         }
+        #import-link:focus {
+            color: var(--text-light);
+        }
     </style>
 <?php
 $OUTPUT->bodyStart();
@@ -333,7 +336,7 @@ echo '<div class="container-fluid">';
 $OUTPUT->flashMessages();
 ?>
     <div class="pull-right" style="padding-top:1rem;">
-        <a href="#importModal" class="btn btn-link" data-toggle="modal"><span class="fas fa-file-import" aria-hidden="true"></span>
+        <a href="#importModal" id="import-link" class="btn btn-link" data-toggle="modal"><span class="fas fa-file-import" aria-hidden="true"></span>
         Import from Previous Site</a>
     </div>
     <h3>Edit Homepage Information</h3>
@@ -521,9 +524,8 @@ $allHomes = $allHomesStmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
                 <form action="import.php" method="post">
                     <div class="modal-body">
-                        <p class="alert alert-warning">Please note that any syllabus, schedule, and profile picture
-                            files from the previous site will not be imported and will need to be re-uploaded to this
-                            site.</>
+                        <p class="alert alert-warning">Please note that he profile picture from the previous site <strong>will</strong> be imported, but the syllabus and/or schedule 
+                            files will not be imported unless the option to do so is selected.</>
                         <?php
                         if ($allHomes) {
                             echo '<div class="form-group"><label for="importSite">Select Homepage to Import</label><select class="form-control" id="importSite" name="importSite">';
@@ -539,6 +541,12 @@ $allHomes = $allHomesStmt->fetchAll(PDO::FETCH_ASSOC);
                                 echo '<option value="' . $prevHome["home_id"] . '">' . $title . '</option>';
                             }
                             echo '</select></div>';
+                            ?>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="check1" name="isImportingFiles" value="true">
+                                    <label class="form-check-label">Import the syllabus and schedule files as part of this process.</label>
+                                </div>
+                            <?php
                         } else {
                             echo '<p><em>You do not have any previously completed homepages to import from.</em></p>';
                         }
