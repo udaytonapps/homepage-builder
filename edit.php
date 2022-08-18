@@ -242,15 +242,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save'])) {
             ":about_me" => $aboutMe
         ));
     } else {
-        // First delete old blobs before adding new ones
-        $delSyllabus = $PDOX->prepare("DELETE FROM {$p}blob_file WHERE file_id = :syllabusId");
-        $delSyllabus->execute(array(":syllabusId" => $home["syllabus_blob_id"]));
+        // First delete old blobs before adding new ones, but ONLY IF blob id isn't in use for another course
+        $delSyllabus = $PDOX->prepare("DELETE FROM {$p}blob_file WHERE file_id = :syllabusId AND (SELECT COUNT(*) FROM {$p}course_home WHERE syllabus_blob_id = :syllabusId AND link_id != :linkId) = 0");
+        $delSyllabus->execute(array(":syllabusId" => $home["syllabus_blob_id"], ":linkId" => $LINK->id));
 
-        $delSchedule = $PDOX->prepare("DELETE FROM {$p}blob_file WHERE file_id = :scheduleId");
-        $delSchedule->execute(array(":scheduleId" => $home["schedule_blob_id"]));
+        $delSchedule = $PDOX->prepare("DELETE FROM {$p}blob_file WHERE file_id = :scheduleId AND (SELECT COUNT(*) FROM {$p}course_home WHERE schedule_blob_id = :scheduleId AND link_id != :linkId) = 0");
+        $delSchedule->execute(array(":scheduleId" => $home["schedule_blob_id"], ":linkId" => $LINK->id));
 
-        $delPicture = $PDOX->prepare("DELETE FROM {$p}blob_file WHERE file_id = :pictureId");
-        $delPicture->execute(array(":pictureId" => $home["picture_blob_id"]));
+        $delPicture = $PDOX->prepare("DELETE FROM {$p}blob_file WHERE file_id = :pictureId AND (SELECT COUNT(*) FROM {$p}course_home WHERE picture_blob_id = :pictureId AND link_id != :linkId) = 0");
+        $delPicture->execute(array(":pictureId" => $home["picture_blob_id"], ":linkId" => $LINK->id));
 
         // Homepage previously existed so update
         $updateStmt = $PDOX->prepare("UPDATE {$p}course_home SET 
