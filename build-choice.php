@@ -28,9 +28,8 @@ if ($USER->instructor) {
             </div>
         </div>
 <?php
-
     } else {
-        header('Location: ' . 'edit.php');
+        header('Location: ' . addSession('edit.php'));
     }
 } else {
     $OUTPUT->splashPage(
