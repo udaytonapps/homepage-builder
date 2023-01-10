@@ -520,7 +520,7 @@ $OUTPUT->flashMessages();
         </div>
         <hr>
         <h5>All finished? Click "Save" to save your changes on all tabs and return to the main page.</h5>
-        <button type="submit" name="save" class="btn btn-primary">Save</button>
+        <button id="save-button" type="submit" name="save" class="btn btn-primary">Save</button>
         <a href="<?= addSession("index.php") ?>" class="btn btn-default">Cancel</a>
     </form>
 <?php
@@ -575,9 +575,23 @@ $allHomes = $allHomesStmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                 </form>
             </div>
-
         </div>
     </div>
+    <div id="exceeded-size-modal" class="modal fade" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Upload Failed</h4>
+            </div>
+            <div class="modal-body">
+                <p>The "<span id="which-file"></span>" file size is too large and cannot be uploaded.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+            </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 <?php
 
 $OUTPUT->footerStart();
@@ -656,7 +670,16 @@ $OUTPUT->footerStart();
             imageEditEditor: doka,
             imageEditInstantEdit: false,
             server: {
-                process: 'edit.php?PHPSESSID=<?php echo session_id() ?>',
+                process: {
+                    onload: (res) => {
+                        if (res.includes('Error: Maximum size')) {
+                            $('#exceeded-size-modal').modal('show');
+                            $('#which-file').text('Profile Picture');
+                            pond_picture.removeFile();
+                        }
+                        return res;
+                    }
+                },
                 revert: 'delete-picture.php?PHPSESSID=<?php echo session_id() ?>'
             },
             files: [
@@ -670,7 +693,16 @@ $OUTPUT->footerStart();
 
         const pond_syllabus = FilePond.create(document.querySelector('#syllabus'), {
             server: {
-                process: 'edit.php?PHPSESSID=<?php echo session_id() ?>',
+                process: {
+                    onload: (res) => {
+                        if (res.includes('Error: Maximum size')) {
+                            $('#exceeded-size-modal').modal('show');
+                            $('#which-file').text('Syllabus');
+                            pond_syllabus.removeFile();
+                        }
+                        return res;
+                    }
+                },
                 revert: 'delete-syllabus.php?PHPSESSID=<?php echo session_id() ?>'
             },
             files: [
@@ -684,7 +716,16 @@ $OUTPUT->footerStart();
 
         const pond_schedule = FilePond.create(document.querySelector('#schedule'), {
             server: {
-                process: 'edit.php?PHPSESSID=<?php echo session_id() ?>',
+                process: {
+                    onload: (res) => {
+                        if (res.includes('Error: Maximum size')) {
+                            $('#exceeded-size-modal').modal('show');
+                            $('#which-file').text('Schedule');
+                            pond_schedule.removeFile();
+                        }
+                        return res;
+                    }
+                },
                 revert: 'delete-schedule.php?PHPSESSID=<?php echo session_id() ?>'
             },
             files: [
