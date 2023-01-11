@@ -522,6 +522,7 @@ $OUTPUT->flashMessages();
         <h5>All finished? Click "Save" to save your changes on all tabs and return to the main page.</h5>
         <button id="save-button" type="submit" name="save" class="btn btn-primary">Save</button>
         <a href="<?= addSession("index.php") ?>" class="btn btn-default">Cancel</a>
+        <span id="loading-hint" style="padding-left: 10px; color: red; visibility: hidden;">Files are still loading, please wait...</span>
     </form>
 <?php
 echo '</div>'; // End container
@@ -735,6 +736,34 @@ $OUTPUT->footerStart();
                 }
                 ?>
             ]
+        });
+
+        // Handles whether 'Save' button is disabled
+        var fileLoadingRef = {};
+        var stillLoading = false;
+
+        // Whenever any file upload starts, disable the 'Save' button
+        document.addEventListener('FilePond:processfilestart', (e) => {
+            stillLoading = true;
+            fileLoadingRef[e.detail.file.file.name] = true;
+            $('#save-button').prop('disabled', stillLoading);
+            $('#loading-hint').css('visibility', 'visible');
+        });
+
+        // Whenever all files are done loading, enable the 'Save' button
+        document.addEventListener('FilePond:processfile', (e) => {
+            // Naively assume this is last to process
+            fileLoadingRef[e.detail.file.file.name] = false;
+            stillLoading = false;
+            // Then check all known file uploads that may be active
+            for (const key in fileLoadingRef) {
+                if (fileLoadingRef[key]) {
+                    // If we know we are still loading, toggle
+                    stillLoading = true;
+                }
+            }
+            $('#save-button').prop('disabled', stillLoading);
+            $('#loading-hint').css('visibility', 'hidden');
         });
     </script>
 <?php
