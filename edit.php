@@ -762,7 +762,9 @@ $OUTPUT->footerStart();
                 }
             }
             $('#save-button').prop('disabled', stillLoading);
-            $('#loading-hint').css('visibility', 'hidden');
+            if (!stillLoading) {
+                $('#loading-hint').css('visibility', 'hidden');
+            }
         });
     </script>
 <?php
