@@ -540,8 +540,7 @@ $allHomes = $allHomesStmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
                 <form action="import.php" method="post">
                     <div class="modal-body">
-                        <p class="alert alert-warning">Please note that he profile picture from the previous site <strong>will</strong> be imported, but the syllabus and/or schedule 
-                            files will not be imported unless the option to do so is selected.</>
+                        <p class="alert alert-info">Please note that the profile picture as well as syllabus and/or schedule files from the previous site <strong>will</strong> be imported, if available. The syllabus and/or schedule files can be skipped if the option below is unchecked.</p>
                         <?php
                         if ($allHomes) {
                             echo '<div class="form-group"><label for="importSite">Select Homepage to Import</label><select class="form-control" id="importSite" name="importSite">';
@@ -558,8 +557,8 @@ $allHomes = $allHomesStmt->fetchAll(PDO::FETCH_ASSOC);
                             }
                             echo '</select></div>';
                             ?>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="isImportingFiles" name="isImportingFiles" value="true">
+                                <div class="form-check" style="padding-left: 5px;">
+                                    <input class="form-check-input" type="checkbox" id="isImportingFiles" name="isImportingFiles" checked>
                                     <label for="isImportingFiles" class="form-check-label">Import the syllabus and schedule files as part of this process.</label>
                                 </div>
                             <?php
