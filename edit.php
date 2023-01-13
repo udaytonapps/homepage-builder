@@ -40,9 +40,9 @@ if ($home) {
     $addtl_contacts = $home["addtl_contacts"];
     $getting_started = $home["getting_started"];
     $about_me = $home["about_me"];
-    $_SESSION['syllabus'] = isset($home["syllabus_blob_id"]) && $home["syllabus_blob_id"] != null ? BlobUtil::getAccessUrlForBlob($home["syllabus_blob_id"]) : false;
-    $_SESSION['schedule'] = isset($home["schedule_blob_id"]) && $home["schedule_blob_id"] != null ? BlobUtil::getAccessUrlForBlob($home["schedule_blob_id"]) : false;
-    $_SESSION['picture'] = isset($home["picture_blob_id"]) && $home["picture_blob_id"] != null ? BlobUtil::getAccessUrlForBlob($home["picture_blob_id"]) : false;
+    $_SESSION['syllabus'] = isset($home["syllabus_blob_id"]) && $home["syllabus_blob_id"] != null ? BlobUtil::getAccessUrlForBlob($home["syllabus_blob_id"], false, true) : false;
+    $_SESSION['schedule'] = isset($home["schedule_blob_id"]) && $home["schedule_blob_id"] != null ? BlobUtil::getAccessUrlForBlob($home["schedule_blob_id"], false, true) : false;
+    $_SESSION['picture'] = isset($home["picture_blob_id"]) && $home["picture_blob_id"] != null ? BlobUtil::getAccessUrlForBlob($home["picture_blob_id"], false, true) : false;
 } else {
     $sections = '';
     $meetings = '';
