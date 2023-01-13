@@ -70,6 +70,11 @@ if ( $USER->instructor && isset($_POST["importSite"]) && is_numeric($_POST["impo
             if ($isImportingFiles) {
                 // Combine the file upload elements only if file import option was selected
                 $arr = array_merge($arr, array(":syllabus_blob_id" => $home["syllabus_blob_id"], ":schedule_blob_id" => $home["schedule_blob_id"]));
+
+                // Clear out the previous session value after import (if importing files)
+                // If only importing one or the other, this prevents a previously existing doc from being re-saved
+                $_SESSION['syllabus_blob'] = $home["syllabus_blob_id"];
+                $_SESSION['schedule_blob'] = $home["schedule_blob_id"];
             }
             $updateHomeStmt->execute($arr);
         } else {
