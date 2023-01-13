@@ -520,8 +520,9 @@ $OUTPUT->flashMessages();
         </div>
         <hr>
         <h5>All finished? Click "Save" to save your changes on all tabs and return to the main page.</h5>
-        <button type="submit" name="save" class="btn btn-primary">Save</button>
+        <button id="save-button" type="submit" name="save" class="btn btn-primary">Save</button>
         <a href="<?= addSession("index.php") ?>" class="btn btn-default">Cancel</a>
+        <span id="loading-hint" style="padding-left: 10px; color: red; visibility: hidden;">Files are still loading, please wait...</span>
     </form>
 <?php
 echo '</div>'; // End container
@@ -539,8 +540,7 @@ $allHomes = $allHomesStmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
                 <form action="import.php" method="post">
                     <div class="modal-body">
-                        <p class="alert alert-warning">Please note that he profile picture from the previous site <strong>will</strong> be imported, but the syllabus and/or schedule 
-                            files will not be imported unless the option to do so is selected.</>
+                        <p class="alert alert-info">Please note that the profile picture as well as syllabus and/or schedule files from the previous site <strong>will</strong> be imported, if available. The syllabus and/or schedule files can be skipped if the option below is unchecked.</p>
                         <?php
                         if ($allHomes) {
                             echo '<div class="form-group"><label for="importSite">Select Homepage to Import</label><select class="form-control" id="importSite" name="importSite">';
@@ -557,8 +557,8 @@ $allHomes = $allHomesStmt->fetchAll(PDO::FETCH_ASSOC);
                             }
                             echo '</select></div>';
                             ?>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="isImportingFiles" name="isImportingFiles" value="true">
+                                <div class="form-check" style="padding-left: 5px;">
+                                    <input class="form-check-input" type="checkbox" id="isImportingFiles" name="isImportingFiles" checked>
                                     <label for="isImportingFiles" class="form-check-label">Import the syllabus and schedule files as part of this process.</label>
                                 </div>
                             <?php
@@ -575,9 +575,23 @@ $allHomes = $allHomesStmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                 </form>
             </div>
-
         </div>
     </div>
+    <div id="exceeded-size-modal" class="modal fade" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Upload Failed</h4>
+            </div>
+            <div class="modal-body">
+                <p>The "<span id="which-file"></span>" file size is too large and cannot be uploaded.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+            </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 <?php
 
 $OUTPUT->footerStart();
@@ -656,7 +670,16 @@ $OUTPUT->footerStart();
             imageEditEditor: doka,
             imageEditInstantEdit: false,
             server: {
-                process: 'edit.php?PHPSESSID=<?php echo session_id() ?>',
+                process: {
+                    onload: (res) => {
+                        if (res.includes('Error: Maximum size')) {
+                            $('#exceeded-size-modal').modal('show');
+                            $('#which-file').text('Profile Picture');
+                            pond_picture.removeFile();
+                        }
+                        return res;
+                    }
+                },
                 revert: 'delete-picture.php?PHPSESSID=<?php echo session_id() ?>'
             },
             files: [
@@ -670,7 +693,16 @@ $OUTPUT->footerStart();
 
         const pond_syllabus = FilePond.create(document.querySelector('#syllabus'), {
             server: {
-                process: 'edit.php?PHPSESSID=<?php echo session_id() ?>',
+                process: {
+                    onload: (res) => {
+                        if (res.includes('Error: Maximum size')) {
+                            $('#exceeded-size-modal').modal('show');
+                            $('#which-file').text('Syllabus');
+                            pond_syllabus.removeFile();
+                        }
+                        return res;
+                    }
+                },
                 revert: 'delete-syllabus.php?PHPSESSID=<?php echo session_id() ?>'
             },
             files: [
@@ -684,7 +716,16 @@ $OUTPUT->footerStart();
 
         const pond_schedule = FilePond.create(document.querySelector('#schedule'), {
             server: {
-                process: 'edit.php?PHPSESSID=<?php echo session_id() ?>',
+                process: {
+                    onload: (res) => {
+                        if (res.includes('Error: Maximum size')) {
+                            $('#exceeded-size-modal').modal('show');
+                            $('#which-file').text('Schedule');
+                            pond_schedule.removeFile();
+                        }
+                        return res;
+                    }
+                },
                 revert: 'delete-schedule.php?PHPSESSID=<?php echo session_id() ?>'
             },
             files: [
@@ -694,6 +735,36 @@ $OUTPUT->footerStart();
                 }
                 ?>
             ]
+        });
+
+        // Handles whether 'Save' button is disabled
+        var fileLoadingRef = {};
+        var stillLoading = false;
+
+        // Whenever any file upload starts, disable the 'Save' button
+        document.addEventListener('FilePond:processfilestart', (e) => {
+            stillLoading = true;
+            fileLoadingRef[e.detail.file.file.name] = true;
+            $('#save-button').prop('disabled', stillLoading);
+            $('#loading-hint').css('visibility', 'visible');
+        });
+
+        // Whenever all files are done loading, enable the 'Save' button
+        document.addEventListener('FilePond:processfile', (e) => {
+            // Naively assume this is last to process
+            fileLoadingRef[e.detail.file.file.name] = false;
+            stillLoading = false;
+            // Then check all known file uploads that may be active
+            for (const key in fileLoadingRef) {
+                if (fileLoadingRef[key]) {
+                    // If we know we are still loading, toggle
+                    stillLoading = true;
+                }
+            }
+            $('#save-button').prop('disabled', stillLoading);
+            if (!stillLoading) {
+                $('#loading-hint').css('visibility', 'hidden');
+            }
         });
     </script>
 <?php
